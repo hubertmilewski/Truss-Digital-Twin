@@ -1,0 +1,15 @@
+:root {
+  --text: #000;
+  --bg: #fff;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+#root {
+  padding: 2rem;
+}

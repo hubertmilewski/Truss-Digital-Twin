@@ -1,0 +1,20 @@
+digital-twin/
+├── public/                  
+│   └── model_kratownicy.glb    <-- Nasz eksport z Blendera trafi tutaj
+├── src/
+│   ├── components/             <-- Nasze klocki Lego
+│   │   ├── ui/                 <-- Klasyczny interfejs 2D
+│   │   │   ├── Header.jsx      <-- Górny pasek z logo i statusem
+│   │   │   ├── SensorCard.jsx  <-- REUŻYWALNY komponent: przyjmie nazwę i wagę
+│   │   │   └── Charts.jsx      <-- Wykresy analityczne
+│   │   └── webgl/              <-- Wszystko co trójwymiarowe
+│   │       ├── Scene.jsx       <-- Scena, światło, kamera
+│   │       └── Truss.jsx       <-- Komponent ładujący model 3D i kolorujący belki
+│   ├── store/                  
+│   │   └── useSensorStore.js   <-- Serce apki: pamięć RAM (Zustand) dla odczytów
+│   ├── utils/                  
+│   │   └── serialManager.js    <-- Osobny plik na całą logikę Web Serial API
+│   ├── App.jsx                 <-- Główny layout zbierający wszystko w całość
+│   ├── index.css               <-- Globalne style, kolory, zmienne CSS
+│   └── main.jsx                
+└── package.json
