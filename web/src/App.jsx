@@ -1,6 +1,6 @@
 import Header from './components/layout/Header';
 import SidebarLeft from './components/layout/SidebarLeft';
-import Visualization from './components/visualization/Visualization';
+import MainChart from './components/telemetry/MainChart';
 import SidebarRight from './components/layout/SidebarRight';
 import Footer from './components/layout/Footer';
 
@@ -8,10 +8,9 @@ function App() {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-brand-bg text-brand-text">
       <Header />
-
-      <main className="flex-1 grid grid-cols-[320px_1fr_280px] overflow-hidden">
+      <main className="flex-1 grid grid-cols-[300px_2fr_1fr] overflow-hidden">
         <SidebarLeft />
-        <Visualization />
+        <MainChart />
         <SidebarRight />
       </main>
 
