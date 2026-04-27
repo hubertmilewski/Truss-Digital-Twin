@@ -5,10 +5,8 @@ let reader;
 
 export const connectSerial = async () => {
   try {
-    // Prosi użytkownika o wybranie portu COM
+    // Prosi o wybranie portu COM
     port = await navigator.serial.requestPort();
-    
-    // Pico standardowo działa świetnie na 115200 baud
     await port.open({ baudRate: 115200 }); 
     
     useSensorStore.getState().setIsConnected(true);
