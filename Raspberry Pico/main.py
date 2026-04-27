@@ -13,43 +13,47 @@ waga.power_off()
 time.sleep_ms(1)
 waga.power_on()
 
-print("Rozpoczynam stabilny odczyt danych z uwzględnieniem kalibracji...")
+print("Start...")
 
-def stabilny_odczyt(waga, ilosc_probek=15):
-    odczyty = []
-    
-    for _ in range(ilosc_probek):
-        odczyty.append(waga.read())
-        # HX711 standardowo wykonuje 10 pomiarów na sekundę, dajemy mu 100ms na wygenerowanie nowej wartości 
-        time.sleep_ms(100) 
-        
-    # Sortujemy i odcinamy po 20% skrajnych wartości
-    odczyty.sort()
-    margines = ilosc_probek // 5 
-    odczyty_czyste = odczyty[margines : -margines]
-    
-    # Wyliczamy ostateczną średnią z "czystego" środka
-    srednia = sum(odczyty_czyste) // len(odczyty_czyste)
-    return srednia
-
-#Stałe dane do konfiguracji
+# Stałe dane do konfiguracji
 TARA = -382711
 WSPOLCZYNNIK = 419823
+ROZMIAR_BUFORA = 15
+
+# Tworzymy pustą listę, która będzie naszym "oknem" średniej kroczącej
+bufor = []
+
+# Zapełniamy bufor startowy (zrobi to tylko raz przy uruchomieniu)
+while len(bufor) < ROZMIAR_BUFORA:
+    if waga.is_ready():
+        bufor.append(waga.read())
+    time.sleep_ms(10)
 
 while True:
-    # 1. Pobieramy uśredniony odczyt z czujnika
-    surowy_odczyt = stabilny_odczyt(waga)
-    
-    # 2. Wyliczamy kilogramy i od razu mnożymy przez 1000, aby uzyskać gramy
-    waga_g = ((surowy_odczyt - TARA) / WSPOLCZYNNIK) * 1000
-    
-    # 3. Blokujemy wartości ujemne przy pustej szali
-    if waga_g < 0:
-        waga_g = 0
-    
-    # 4. Wyświetlamy wynik w gramach, bez kłamliwych miejsc po przecinku (:.0f)
-    print(f'{{"sensor_A": {waga_g:.0f}}}')
+    # Zamiast time.sleep, po prostu pytamy układ: "Masz nowe dane?"
+    if waga.is_ready(): 
+        
+        surowy_odczyt = waga.read()
+        
+        # Średnia krocząca (Moving Average)
+        bufor.pop(0)          # Wyrzucamy najstarszy odczyt
+        bufor.append(surowy_odczyt) # Dodajemy najświeższy
+        
+        # Kopiujemy i sortujemy bufor, żeby odrzucić skrajności 
+        posortowane = sorted(bufor)
+        margines = ROZMIAR_BUFORA // 5 
+        odczyty_czyste = posortowane[margines : -margines]
+        
+        srednia = sum(odczyty_czyste) // len(odczyty_czyste)
+        
+        # Wyliczamy gramy
+        waga_g = ((srednia - TARA) / WSPOLCZYNNIK) * 1000
+        
+        if waga_g < 0:
+            waga_g = 0
+            
+        # Wysyłamy paczkę JSON do aplikacji
+        print(f'{{"sensor_A": {waga_g:.0f}}}')
 
-    # Sekunda przerwy przed kolejną serią pomiarową
-    time.sleep(1)
-
+    # Minimalne opóźnienie (1 milisekunda), aby nie spalić procesora Pico
+    time.sleep_ms(1)
