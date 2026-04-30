@@ -1,15 +1,13 @@
-Dodajmy nowe możliwości do projeku. Usuńmy statyczne dane o częstotliwości, oraz zacznijmy liczyć czas pracy, lecz w footerze.
-
-Oprócz tego, dodajmy możliwość exportowania danych w formacie excel, nie json. 
-
-Dodajmy również możliwość resetowania aktualnych danych.
-
-W jaki sposób możemy dodać więcej czujników do projektu?
+W aplikacji zróbić przycisk do wyboru, albo wyświetlanie newtonów albo nacisku w gramach
 
 Dodać możliwość rozłączenia od Pico.
 
+Dodajmy również możliwość resetowania aktualnych danych.
+
+Oprócz tego, dodajmy możliwość exportowania danych w formacie excel, nie json. 
+
+W jaki sposób możemy dodać więcej czujników do projektu?
+
 Czy jest możliwość kalibracji czujników poprzez aplikacje? Przykładowo podłaczay sie, uzyskujemy dane surowe dla wyniku kg=0 i możemy dzięki temu scalować, albo dodajemy 1kg i odczytujemy ponownie wartość i podstawiamy do wzoru.
 
-Obliczanie newtonów w micropythonie i wysyłanie danych w gramach i newtonach. 
 
-W aplikacji zróbić przycisk do wyboru, albo wyświetlanie newtonów albo nacisku w gramach

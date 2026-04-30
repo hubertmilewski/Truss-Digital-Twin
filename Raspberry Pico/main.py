@@ -20,6 +20,9 @@ TARA = -382711
 WSPOLCZYNNIK = 419823
 ROZMIAR_BUFORA = 15
 
+# Przyspieszenie ziemskie do obliczeń Niutonów
+G = 9.81 
+
 # Tworzymy pustą listę, która będzie naszym "oknem" średniej kroczącej
 bufor = []
 
@@ -30,12 +33,12 @@ while len(bufor) < ROZMIAR_BUFORA:
     time.sleep_ms(10)
 
 while True:
-    # Zamiast time.sleep, po prostu pytamy układ: "Masz nowe dane?"
+    # Zamiast time.sleep, po prostu sprawdzamy, czy układ ma dane
     if waga.is_ready(): 
         
         surowy_odczyt = waga.read()
         
-        # Średnia krocząca (Moving Average)
+        # Średnia krocząca 
         bufor.pop(0)          # Wyrzucamy najstarszy odczyt
         bufor.append(surowy_odczyt) # Dodajemy najświeższy
         
@@ -52,8 +55,11 @@ while True:
         if waga_g < 0:
             waga_g = 0
             
-        # Wysyłamy paczkę JSON do aplikacji
-        print(f'{{"sensor_A": {waga_g:.0f}}}')
+        # Wyliczamy Niutony: masa w kilogramach * przyspieszenie ziemskie
+        waga_N = (waga_g / 1000) * G
+            
+        # Wysyłamy paczkę JSON do aplikacji z dwiema wartościami
+        print(f'{{"sensor_A_g": {waga_g:.0f}, "sensor_A_N": {waga_N:.2f}}}')
 
     # Minimalne opóźnienie (1 milisekunda), aby nie spalić procesora Pico
     time.sleep_ms(1)
