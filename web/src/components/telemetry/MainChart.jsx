@@ -1,5 +1,5 @@
 import { useSensorStore } from "../../store/useSensorStore";
-import { gToN } from "../../utils/converters";
+
 import { 
   LineChart, 
   Line, 

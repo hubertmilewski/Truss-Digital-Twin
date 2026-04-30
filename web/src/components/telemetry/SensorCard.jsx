@@ -1,4 +1,4 @@
-import { gToN } from "../../utils/converters";
+
 
 function SensorCard({ label, valueG = 0, valueN = 0, maxLoadN = 50 }) {
   const loadPercentage = Math.min((valueN / maxLoadN) * 100, 100);
