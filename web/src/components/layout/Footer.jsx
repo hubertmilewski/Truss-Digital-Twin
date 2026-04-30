@@ -1,14 +1,41 @@
+import { useState, useEffect } from "react";
+import { useSensorStore } from "../../store/useSensorStore";
+
 function Footer() {
+  const { isConnected, connectionStartTime } = useSensorStore();
+  const [uptime, setUptime] = useState("00:00:00");
+
+  useEffect(() => {
+    let interval;
+    if (isConnected && connectionStartTime) {
+      interval = setInterval(() => {
+        const now = new Date().getTime();
+        const diff = now - connectionStartTime;
+        
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        const pad = (num) => String(num).padStart(2, '0');
+        setUptime(`${pad(hours)}:${pad(minutes)}:${pad(seconds)}`);
+      }, 1000);
+    } else {
+      setUptime("00:00:00");
+    }
+
+    return () => clearInterval(interval);
+  }, [isConnected, connectionStartTime]);
+
   return (
     <footer className="bg-surface border-t border-surface-border px-8 py-2 flex justify-between items-center text-[10px] text-brand-secondary font-bold tracking-wider">
       <div className="flex gap-6 items-center">
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-          OPÓŹNIENIE: 12ms
+          CZAS PRACY: {uptime}
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-          BUFOR: 0.2MB
+          <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-slate-400'}`}></span>
+          STATUS: {isConnected ? 'POŁĄCZONO' : 'ROZŁĄCZONO'}
         </div>
       </div>
       <div className="uppercase">

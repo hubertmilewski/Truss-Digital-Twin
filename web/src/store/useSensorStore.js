@@ -10,6 +10,7 @@ export const useSensorStore = create((set, get) => ({
   history: [],
   
   isConnected: false,
+  connectionStartTime: null,
   isRecording: false,
   startTime: null,
   
@@ -51,5 +52,8 @@ export const useSensorStore = create((set, get) => ({
   }),
   
   resetHistory: () => set({ history: [] }),
-  setIsConnected: (status) => set({ isConnected: status }),
+  setIsConnected: (status) => set({ 
+    isConnected: status,
+    connectionStartTime: status ? new Date().getTime() : null 
+  }),
 }))

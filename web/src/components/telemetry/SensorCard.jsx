@@ -1,4 +1,7 @@
-function SensorCard({ label, value, unit = "g", maxLoad = 5000 }) {
+import { gToN } from "../../utils/converters";
+
+function SensorCard({ label, value, maxLoad = 5000 }) {
+  const valueInN = gToN(value);
   const loadPercentage = Math.min((value / maxLoad) * 100, 100);
   const isOverloaded = value > maxLoad * 0.8;
 
@@ -8,7 +11,7 @@ function SensorCard({ label, value, unit = "g", maxLoad = 5000 }) {
         {label}
       </label>
       <div className="text-4xl font-bold text-brand-primary mb-3 font-mono">
-        {value}<span className="text-sm font-normal text-brand-secondary ml-1">{unit}</span>
+        {valueInN}<span className="text-sm font-normal text-brand-secondary ml-1">N</span>
       </div>
       <div className="h-1.5 w-full bg-surface-border rounded-full overflow-hidden">
         <div 
