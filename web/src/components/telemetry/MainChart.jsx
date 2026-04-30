@@ -19,18 +19,20 @@ function MainChart() {
   const yDomain = isN ? [0, 50] : [0, 5000];
   const yTicks = isN ? [0, 10, 20, 30, 40, 50] : [0, 1000, 2000, 3000, 4000, 5000];
 
-  // Ticki co 1 sekundę dla osi X
+  // Parametry osi X
+  const currentMaxTime = history.length > 0 ? history[history.length - 1].time : 0;
+  const xDomainEnd = Math.max(10, Math.ceil(currentMaxTime + 1));
+  
   const getXTicks = () => {
-    if (history.length === 0) return [0];
-    const maxTime = Math.ceil(history[history.length - 1].time || 0);
-    return Array.from({ length: maxTime + 1 }, (_, i) => i);
+    // Pokazujemy ticki co 2 sekundy, żeby nie zagracać siatki
+    return Array.from({ length: xDomainEnd + 1 }, (_, i) => i).filter(i => i % 2 === 0);
   };
 
   return (
     <section className="bg-slate-50 relative overflow-hidden flex flex-col p-8">
       <div className="flex justify-between items-center mb-6">
         <div className="flex flex-col gap-1">
-          <h3 className={`${isRecording ? 'text-red-500 animate-pulse' : 'text-brand-secondary'} text-xs uppercase font-bold text-brand-secondary tracking-widest flex items-center`}>
+          <h3 className={`${isRecording ? 'text-red-500 animate-pulse' : 'text-brand-secondary'} text-xs uppercase font-bold tracking-widest flex items-center`}>
             Dynamika Obciążenia
           </h3>
           <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Jednostka: {isN ? 'Niutony' : 'Gramy'}</span>
@@ -53,19 +55,19 @@ function MainChart() {
           </div>
           
           <div className="flex items-center gap-1.5 px-3 py-2 bg-white border border-surface-border rounded-lg shadow-sm text-[10px] font-bold text-brand-secondary">
-            CZAS: <span className="text-brand-primary font-mono">{history.length > 0 ? history[history.length-1].time : 0}s</span>
+            CZAS: <span className="text-brand-primary font-mono">{currentMaxTime}s</span>
           </div>
         </div>
       </div>
       
       <div className="flex-1 bg-white border border-surface-border rounded-2xl shadow-sm p-4">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={history} margin={{ top: 20, right: 40, left: 20, bottom: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+          <LineChart data={history.length > 0 ? history : [{ time: 0, [dataKey]: 0 }]} margin={{ top: 20, right: 40, left: 20, bottom: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="#f1f5f9" />
             <XAxis 
               dataKey="time" 
               type="number"
-              domain={[0, 'dataMax + 1']}
+              domain={[0, xDomainEnd]}
               ticks={getXTicks()}
               axisLine={false}
               tickLine={false}
