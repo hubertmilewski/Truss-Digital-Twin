@@ -1,7 +1,3 @@
-W aplikacji zróbić przycisk do wyboru, albo wyświetlanie newtonów albo nacisku w gramach
-
-Dodać możliwość rozłączenia od Pico.
-
 Dodajmy również możliwość resetowania aktualnych danych.
 
 Oprócz tego, dodajmy możliwość exportowania danych w formacie excel, nie json. 

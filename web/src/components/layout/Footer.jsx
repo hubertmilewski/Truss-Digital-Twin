@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSensorStore } from "../../store/useSensorStore";
 
 function Footer() {
-  const { isConnected, connectionStartTime } = useSensorStore();
+  const { isConnected, connectionStartTime, isSignalLost } = useSensorStore();
   const [uptime, setUptime] = useState("00:00:00");
 
   useEffect(() => {
@@ -34,8 +34,8 @@ function Footer() {
           CZAS PRACY: {uptime}
         </div>
         <div className="flex items-center gap-2">
-          <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-slate-400'}`}></span>
-          STATUS: {isConnected ? 'POŁĄCZONO' : 'ROZŁĄCZONO'}
+          <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? (isSignalLost ? 'bg-amber-500' : 'bg-green-500 animate-pulse') : 'bg-slate-400'}`}></span>
+          STATUS: {isConnected ? (isSignalLost ? 'BRAK SYGNAŁU' : 'POŁĄCZONO') : 'ROZŁĄCZONO'}
         </div>
       </div>
       <div className="uppercase">

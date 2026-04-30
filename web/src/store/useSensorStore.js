@@ -11,12 +11,14 @@ export const useSensorStore = create((set, get) => ({
   history: [],
   
   isConnected: false,
+  isSignalLost: false,
   connectionStartTime: null,
   isRecording: false,
   startTime: null,
   displayUnit: 'N', // Domyślnie Niutony
   
   setDisplayUnit: (unit) => set({ displayUnit: unit }),
+  setSignalLost: (status) => set({ isSignalLost: status }),
   
   // Aktualizacja danych + opcjonalne dodawanie do historii
   setSensorData: (newData) => set((state) => {
@@ -60,6 +62,12 @@ export const useSensorStore = create((set, get) => ({
   }),
   
   resetHistory: () => set({ history: [] }),
+  resetData: () => set({
+    sensorData: { sensor_A_g: 0, sensor_A_N: 0 },
+    history: [],
+    startTime: null,
+    isRecording: false
+  }),
   setIsConnected: (status) => set({ 
     isConnected: status,
     connectionStartTime: status ? new Date().getTime() : null 
