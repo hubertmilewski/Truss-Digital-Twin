@@ -30,8 +30,8 @@ function MainChart() {
     <section className="bg-slate-50 relative overflow-hidden flex flex-col p-8">
       <div className="flex justify-between items-center mb-6">
         <div className="flex flex-col gap-1">
-          <h3 className="text-xs uppercase font-bold text-brand-secondary tracking-widest flex items-center">
-            Dynamika Obciążenia {isRecording && <span className="text-red-500 animate-pulse ml-2 text-[10px]">● LIVE</span>}
+          <h3 className={`${isRecording ? 'text-red-500 animate-pulse' : 'text-brand-secondary'} text-xs uppercase font-bold text-brand-secondary tracking-widest flex items-center`}>
+            Dynamika Obciążenia
           </h3>
           <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Jednostka: {isN ? 'Niutony' : 'Gramy'}</span>
         </div>
