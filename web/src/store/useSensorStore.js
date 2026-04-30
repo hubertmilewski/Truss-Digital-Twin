@@ -3,7 +3,8 @@ import { create } from 'zustand'
 export const useSensorStore = create((set, get) => ({
   // Aktualny odczyt (zawsze aktualizowany)
   sensorData: {
-    sensor_A: 0,
+    sensor_A_g: 0,
+    sensor_A_N: 0,
   },
   
   // Historia odczytów w aktywnej sesji
@@ -13,10 +14,17 @@ export const useSensorStore = create((set, get) => ({
   connectionStartTime: null,
   isRecording: false,
   startTime: null,
+  displayUnit: 'N', // Domyślnie Niutony
+  
+  setDisplayUnit: (unit) => set({ displayUnit: unit }),
   
   // Aktualizacja danych + opcjonalne dodawanie do historii
   setSensorData: (newData) => set((state) => {
-    const updatedSensorData = { ...state.sensorData, ...newData };
+    // Mapujemy stare klucze na nowe jeśli przyjdą (dla kompatybilności wstecznej)
+    const normalizedData = { ...newData };
+    if (newData.sensor_A !== undefined) normalizedData.sensor_A_g = newData.sensor_A;
+    
+    const updatedSensorData = { ...state.sensorData, ...normalizedData };
     
     // Jeśli nie nagrywamy, tylko aktualizujemy bieżące wartości
     if (!state.isRecording) {
@@ -28,7 +36,7 @@ export const useSensorStore = create((set, get) => ({
     const relativeTime = ((currentTime - state.startTime) / 1000).toFixed(1);
 
     const newEntry = {
-      ...newData,
+      ...normalizedData,
       time: parseFloat(relativeTime), // Sekundy jako liczba dla osi X
       timestamp: `${relativeTime}s` // Czytelny label
     };

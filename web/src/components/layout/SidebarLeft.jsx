@@ -11,7 +11,8 @@ function SidebarLeft() {
         <div className="flex flex-col gap-4">
           <SensorCard 
             label="Belka A-1" 
-            value={sensorData.sensor_A} 
+            valueG={sensorData.sensor_A_g} 
+            valueN={sensorData.sensor_A_N} 
           />
           {/* Mapowanie kolejnych czujników */}
         </div>
