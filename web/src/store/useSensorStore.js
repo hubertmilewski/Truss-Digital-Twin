@@ -16,36 +16,58 @@ export const useSensorStore = create((set, get) => ({
   isRecording: false,
   startTime: null,
   displayUnit: 'N', // Domyślnie Niutony
+  extremeValues: {
+    max: null, // { valueG, valueN, sensor, time }
+    min: null,
+  },
   
   setDisplayUnit: (unit) => set({ displayUnit: unit }),
   setSignalLost: (status) => set({ isSignalLost: status }),
   
   // Aktualizacja danych + opcjonalne dodawanie do historii
   setSensorData: (newData) => set((state) => {
-    // Mapujemy stare klucze na nowe jeśli przyjdą (dla kompatybilności wstecznej)
     const normalizedData = { ...newData };
     if (newData.sensor_A !== undefined) normalizedData.sensor_A_g = newData.sensor_A;
     
     const updatedSensorData = { ...state.sensorData, ...normalizedData };
     
-    // Jeśli nie nagrywamy, tylko aktualizujemy bieżące wartości
     if (!state.isRecording) {
       return { sensorData: updatedSensorData };
     }
 
-    // Obliczamy względny czas w sekundach od momentu startu
     const currentTime = new Date().getTime();
-    const relativeTime = ((currentTime - state.startTime) / 1000).toFixed(1);
+    const relativeTime = parseFloat(((currentTime - state.startTime) / 1000).toFixed(1));
+
+    // Szukamy ekstremów w nowej paczce danych
+    let newMax = state.extremeValues.max;
+    let newMin = state.extremeValues.min;
+
+    // Przeszukujemy klucze kończące się na _g (gramy)
+    Object.keys(normalizedData).forEach(key => {
+      if (key.endsWith('_g')) {
+        const sensorId = key.replace('_g', '').replace('sensor_', '');
+        const valG = normalizedData[key];
+        const valN = normalizedData[key.replace('_g', '_N')] || 0;
+
+        if (!newMax || valG > newMax.valueG) {
+          newMax = { valueG: valG, valueN: valN, sensor: sensorId, time: relativeTime };
+        }
+        if (!newMin || valG < newMin.valueG) {
+          newMin = { valueG: valG, valueN: valN, sensor: sensorId, time: relativeTime };
+        }
+      }
+    });
 
     const newEntry = {
       ...normalizedData,
-      time: parseFloat(relativeTime), // Sekundy jako liczba dla osi X
-      timestamp: `${relativeTime}s` // Czytelny label
+      time: relativeTime,
+      timestamp: `${relativeTime}s`
     };
 
     return {
       sensorData: updatedSensorData,
-      history: [...state.history, newEntry].slice(-500) // Zwiększony limit dla lepszej perspektywy czasowej
+      extremeValues: { max: newMax, min: newMin },
+      history: [...state.history, newEntry].slice(-500)
     };
   }),
 
@@ -55,9 +77,9 @@ export const useSensorStore = create((set, get) => ({
     
     return {
       isRecording: switchingOn,
-      // Jeśli zaczynamy nową sesję, resetujemy historię i ustawiamy punkt zero
       startTime: switchingOn ? new Date().getTime() : state.startTime,
-      history: switchingOn ? [] : state.history
+      history: switchingOn ? [] : state.history,
+      extremeValues: switchingOn ? { max: null, min: null } : state.extremeValues
     };
   }),
   
@@ -66,7 +88,8 @@ export const useSensorStore = create((set, get) => ({
     sensorData: { sensor_A_g: 0, sensor_A_N: 0 },
     history: [],
     startTime: null,
-    isRecording: false
+    isRecording: false,
+    extremeValues: { max: null, min: null }
   }),
   setIsConnected: (status) => set({ 
     isConnected: status,
