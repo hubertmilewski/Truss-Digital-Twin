@@ -3,7 +3,7 @@ import Visualization from "../visualization/Visualization";
 import * as XLSX from "xlsx";
 
 function SidebarRight() {
-  const { history } = useSensorStore();
+  const { history, sensors } = useSensorStore();
 
   const exportToExcel = () => {
     if (history.length === 0) {
@@ -12,11 +12,14 @@ function SidebarRight() {
     }
 
     // Przygotowanie danych do formatu tabelarycznego
-    const dataToExport = history.map(row => ({
-      "Czas [s]": row.time,
-      "Czujnik A [g]": row.sensor_A_g,
-      "Czujnik A [N]": row.sensor_A_N,
-    }));
+    const dataToExport = history.map(row => {
+      const exportRow = { "Czas [s]": row.time };
+      sensors.forEach(sensor => {
+        exportRow[`${sensor.label} [g]`] = row[`${sensor.id}_g`];
+        exportRow[`${sensor.label} [N]`] = row[`${sensor.id}_N`];
+      });
+      return exportRow;
+    });
 
     // Tworzenie arkusza
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);

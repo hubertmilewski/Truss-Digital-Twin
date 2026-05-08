@@ -2,7 +2,7 @@ import { useSensorStore } from "../../store/useSensorStore";
 import SensorCard from "../telemetry/SensorCard";
 
 function SidebarLeft() {
-  const { sensorData, extremeValues, displayUnit } = useSensorStore();
+  const { sensorData, extremeValues, displayUnit, sensors } = useSensorStore();
 
   const isN = displayUnit === 'N';
 
@@ -35,12 +35,20 @@ function SidebarLeft() {
       <section>
         <h3 className="text-xs uppercase font-bold text-brand-secondary mb-5 tracking-widest">Telemetria na żywo</h3>
         <div className="flex flex-col gap-4">
-          <SensorCard 
-            label="Belka A-1" 
-            valueG={sensorData.sensor_A_g} 
-            valueN={sensorData.sensor_A_N} 
-          />
-          {/* Mapowanie kolejnych czujników */}
+          {sensors.length > 0 ? (
+            sensors.map((sensor) => (
+              <SensorCard 
+                key={sensor.id}
+                label={sensor.label} 
+                valueG={sensorData[`${sensor.id}_g`] || 0} 
+                valueN={sensorData[`${sensor.id}_N`] || 0} 
+              />
+            ))
+          ) : (
+            <div className="text-[10px] text-slate-400 italic text-center py-4 border border-dashed border-surface-border rounded-xl">
+              Oczekiwanie na konfigurację czujników...
+            </div>
+          )}
         </div>
       </section>
 

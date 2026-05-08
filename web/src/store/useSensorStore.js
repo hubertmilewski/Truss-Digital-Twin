@@ -2,10 +2,8 @@ import { create } from 'zustand'
 
 export const useSensorStore = create((set, get) => ({
   // Aktualny odczyt (zawsze aktualizowany)
-  sensorData: {
-    sensor_A_g: 0,
-    sensor_A_N: 0,
-  },
+  sensorData: {},
+  sensors: [], // Lista czujników z Raspberry: [{id: 'sensor_A', label: 'Belka Lewa (A)'}, ...]
   
   // Historia odczytów w aktywnej sesji
   history: [],
@@ -23,12 +21,16 @@ export const useSensorStore = create((set, get) => ({
   
   setDisplayUnit: (unit) => set({ displayUnit: unit }),
   setSignalLost: (status) => set({ isSignalLost: status }),
+  setSensors: (sensors) => set({ sensors }),
   
   // Aktualizacja danych + opcjonalne dodawanie do historii
   setSensorData: (newData) => set((state) => {
+    // Jeśli to paczka konfiguracyjna
+    if (newData.type === 'config') {
+      return { sensors: newData.sensors };
+    }
+
     const normalizedData = { ...newData };
-    if (newData.sensor_A !== undefined) normalizedData.sensor_A_g = newData.sensor_A;
-    
     const updatedSensorData = { ...state.sensorData, ...normalizedData };
     
     if (!state.isRecording) {

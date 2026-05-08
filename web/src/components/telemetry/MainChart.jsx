@@ -11,13 +11,13 @@ import {
 } from 'recharts';
 
 function MainChart() {
-  const { history, isRecording, displayUnit, setDisplayUnit } = useSensorStore();
+  const { history, isRecording, displayUnit, setDisplayUnit, sensors } = useSensorStore();
 
   const isN = displayUnit === 'N';
-  const dataKey = isN ? 'sensor_A_N' : 'sensor_A_g';
   const unitLabel = isN ? 'N' : 'g';
-  const yDomain = isN ? [0, 50] : [0, 5000];
-  const yTicks = isN ? [0, 10, 20, 30, 40, 50] : [0, 1000, 2000, 3000, 4000, 5000];
+  const colors = ['var(--color-brand-primary)', 'var(--color-brand-accent)', '#10b981', '#f59e0b', '#8b5cf6'];
+  const yDomain = isN ? [0, 10] : [0, 1000];
+  const yTicks = isN ? [0, 2, 4, 6, 8, 10] : [0, 200, 400, 600, 800, 1000];
 
   // Parametry osi X
   const currentMaxTime = history.length > 0 ? history[history.length - 1].time : 0;
@@ -62,7 +62,7 @@ function MainChart() {
       
       <div className="flex-1 bg-white border border-surface-border rounded-2xl shadow-sm p-4">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={history.length > 0 ? history : [{ time: 0, [dataKey]: 0 }]} margin={{ top: 20, right: 40, left: 20, bottom: 20 }}>
+          <LineChart data={history.length > 0 ? history : [{ time: 0 }]} margin={{ top: 20, right: 40, left: 20, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="#f1f5f9" />
             <XAxis 
               dataKey="time" 
@@ -96,14 +96,18 @@ function MainChart() {
               labelFormatter={(label) => `${label} sekunda`}
               cursor={{ stroke: '#e2e8f0', strokeWidth: 2 }}
             />
-            <Line 
-              type="monotone" 
-              dataKey={dataKey} 
-              stroke="var(--color-brand-primary)" 
-              strokeWidth={3}
-              dot={false}
-              isAnimationActive={false}
-            />
+            {sensors.map((sensor, index) => (
+              <Line 
+                key={sensor.id}
+                type="monotone" 
+                dataKey={isN ? `${sensor.id}_N` : `${sensor.id}_g`} 
+                stroke={colors[index % colors.length]} 
+                strokeWidth={3}
+                dot={false}
+                isAnimationActive={false}
+                name={sensor.label}
+              />
+            ))}
           </LineChart>
         </ResponsiveContainer>
       </div>

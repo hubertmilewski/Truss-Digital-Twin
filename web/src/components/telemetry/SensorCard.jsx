@@ -1,6 +1,6 @@
 
 
-function SensorCard({ label, valueG = 0, valueN = 0, maxLoadN = 50 }) {
+function SensorCard({ label, valueG = 0, valueN = 0, maxLoadN = 10 }) {
   const loadPercentage = Math.min((valueN / maxLoadN) * 100, 100);
   const isOverloaded = valueN > maxLoadN * 0.8;
 
