@@ -35,22 +35,19 @@ function SidebarRight() {
   };
 
   return (
-    <aside className="bg-surface lg:border-l border-surface-border flex flex-col overflow-y-auto relative">
-      {/* 3D Visualization fills the entire background */}
-      <div className="flex-1 relative min-h-[250px] sm:min-h-[300px]">
+    <aside className="bg-surface lg:border-l border-surface-border flex flex-col h-full overflow-hidden relative">
+      <div className="flex-3 relative overflow-hidden">
         <div className="absolute inset-0">
           <Visualization isMiniature={true} />
         </div>
-        {/* Heading overlay */}
-        <div className="relative z-10 p-4 sm:p-6">
-          <h3 className="text-xs uppercase font-bold text-brand-secondary tracking-widest">
+        <div className="relative z-10 p-4 sm:p-6 bg-linear-to-b from-white/90 to-transparent">
+          <h3 className="text-[10px] sm:text-xs uppercase font-bold text-brand-secondary tracking-widest">
             Podgląd 3D
           </h3>
         </div>
       </div>
 
-      {/* Akcje systemowe */}
-      <section className="flex flex-col gap-3 p-4 sm:p-6 border-t border-surface-border bg-surface">
+      <section className="flex flex-col gap-3 p-3 sm:p-6 border-t border-surface-border bg-surface">
         <h3 className="text-xs uppercase font-bold text-brand-secondary mb-2 tracking-widest">
           System
         </h3>

@@ -12,7 +12,7 @@ function SensorCard({ label, valueG = 0, valueN = 0, maxLoadN = 10 }) {
           {valueG.toFixed(0)}g
         </div>
       </div>
-      <div className="text-2xl sm:text-4xl font-bold text-brand-primary mb-2 sm:mb-3 font-mono flex items-baseline">
+      <div className="text-3xl sm:text-4xl font-bold text-brand-primary mb-2 sm:mb-3 font-mono flex items-baseline">
         {valueN.toFixed(2)}
         <span className="text-[10px] sm:text-sm font-normal text-brand-secondary ml-1">N</span>
       </div>

@@ -40,12 +40,12 @@ function SidebarLeft() {
   };
 
   return (
-    <aside className="bg-surface lg:border-r border-surface-border p-4 sm:p-6 flex flex-col gap-6 sm:gap-8 overflow-y-auto">
+    <aside className="bg-surface lg:border-r border-surface-border p-3 sm:p-6 flex flex-col gap-4 sm:gap-8 overflow-y-auto">
       <section>
         <h3 className="text-xs uppercase font-bold text-brand-secondary mb-4 sm:mb-5 tracking-widest">
           Telemetria na żywo
         </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-1 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 sm:gap-6">
           {sensors.length > 0 ? (
             sensors.map((sensor) => (
               <SensorCard
@@ -67,7 +67,7 @@ function SidebarLeft() {
         <h3 className="text-xs uppercase font-bold text-brand-secondary mb-4 sm:mb-5 tracking-widest">
           Ekstrema Badania
         </h3>
-        <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
           {renderExtreme("max", extremeValues.max)}
           {renderExtreme("min", extremeValues.min)}
         </div>
