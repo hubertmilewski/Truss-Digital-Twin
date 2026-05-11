@@ -59,19 +59,19 @@ function MainChart() {
   };
 
   return (
-    <section className="bg-brand-bg relative overflow-hidden flex flex-col p-6">
+    <section className="bg-brand-bg relative overflow-hidden flex flex-col p-3 sm:p-6 min-h-0 lg:h-auto h-full">
       {/* Nagłówek sekcji */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-3">
         <h3 className="text-xs uppercase font-bold text-brand-secondary tracking-widest">
           Dynamika Obciążenia
         </h3>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           {/* Przełącznik jednostek */}
-          <div className="flex items-center h-11 bg-surface border border-surface-border rounded-lg overflow-hidden shadow-sm">
+          <div className="flex items-center h-9 sm:h-11 bg-surface border border-surface-border rounded-lg overflow-hidden shadow-sm">
             <button
               onClick={() => setDisplayUnit("N")}
-              className={`px-4 h-full text-xs font-bold tracking-wider transition-all duration-200 ${
+              className={`px-3 sm:px-4 h-full text-[10px] sm:text-xs font-bold tracking-wider transition-all duration-200 ${
                 isN
                   ? "bg-brand-primary text-white shadow-inner"
                   : "text-brand-secondary hover:text-brand-text hover:bg-brand-bg"
@@ -82,7 +82,7 @@ function MainChart() {
             <div className="w-px h-5 bg-surface-border"></div>
             <button
               onClick={() => setDisplayUnit("g")}
-              className={`px-4 h-full text-xs font-bold tracking-wider transition-all duration-200 ${
+              className={`px-3 sm:px-4 h-full text-[10px] sm:text-xs font-bold tracking-wider transition-all duration-200 ${
                 !isN
                   ? "bg-brand-primary text-white shadow-inner"
                   : "text-brand-secondary hover:text-brand-text hover:bg-brand-bg"
@@ -93,37 +93,37 @@ function MainChart() {
           </div>
 
           {/* Wyświetlacz czasu sesji */}
-          <div className="flex items-center gap-2 px-4 h-11 bg-surface border border-surface-border rounded-lg shadow-sm">
-            <span className="text-[10px] font-bold text-brand-secondary uppercase tracking-widest">Czas</span>
-            <span className="text-sm font-bold font-mono text-brand-text tabular-nums leading-none">
+          <div className="flex items-center gap-2 px-3 sm:px-4 h-9 sm:h-11 bg-surface border border-surface-border rounded-lg shadow-sm">
+            <span className="text-[9px] sm:text-[10px] font-bold text-brand-secondary uppercase tracking-widest">Czas</span>
+            <span className="text-xs sm:text-sm font-bold font-mono text-brand-text tabular-nums leading-none">
               {formatSessionTime(currentMaxTime)}
             </span>
-            <span className="text-[10px] font-bold text-brand-secondary">s</span>
+            <span className="text-[9px] sm:text-[10px] font-bold text-brand-secondary">s</span>
           </div>
 
           {/* Przycisk START/STOP POMIAR */}
           {isConnected && (
             <button
               onClick={toggleRecording}
-              className={`flex items-center gap-3 px-6 h-11 rounded-lg text-xs font-bold tracking-wider transition-all shadow-sm active:scale-95 ${
+              className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-6 h-9 sm:h-11 rounded-lg text-[10px] sm:text-xs font-bold tracking-wider transition-all shadow-sm active:scale-95 ${
                 isRecording
                   ? "bg-brand-accent text-white hover:bg-red-700"
                   : "bg-emerald-600 text-white hover:bg-emerald-700"
               }`}
             >
-              <span className={`w-2 h-2 rounded-full bg-white shrink-0 ${isRecording ? "animate-pulse" : ""}`}></span>
-              <span className="leading-none">{isRecording ? "STOP POMIAR" : "START POMIAR"}</span>
+              <span className={`w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-white shrink-0 ${isRecording ? "animate-pulse" : ""}`}></span>
+              <span className="leading-none">{isRecording ? "STOP" : "START"}</span>
             </button>
           )}
         </div>
       </div>
 
       {/* Kontener wykresu */}
-      <div className="flex-1 bg-surface border border-surface-border rounded-xl shadow-sm overflow-hidden">
+      <div className="flex-1 bg-surface border border-surface-border rounded-xl shadow-sm overflow-hidden min-h-[250px] sm:min-h-0">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={history.length > 0 ? history : [{ time: 0 }]}
-            margin={{ top: 24, right: 32, left: 16, bottom: 16 }}
+            margin={{ top: 16, right: 16, left: 8, bottom: 12 }}
           >
             <CartesianGrid
               strokeDasharray="4 4"
@@ -139,13 +139,13 @@ function MainChart() {
               ticks={getXTicks()}
               axisLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
               tickLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
-              tick={{ fontSize: 11, fill: "#64748B", fontWeight: 600, fontFamily: "Inter" }}
-              tickMargin={8}
+              tick={{ fontSize: 10, fill: "#64748B", fontWeight: 600, fontFamily: "Inter" }}
+              tickMargin={6}
               label={{
                 value: `Czas [s]`,
                 position: "insideBottom",
-                offset: -8,
-                fontSize: 10,
+                offset: -4,
+                fontSize: 9,
                 fill: "#94A3B8",
                 fontWeight: 700,
               }}
@@ -155,14 +155,15 @@ function MainChart() {
               ticks={yTicks}
               axisLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
               tickLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
-              tick={{ fontSize: 11, fill: "#64748B", fontWeight: 600, fontFamily: "Inter" }}
-              tickMargin={8}
+              tick={{ fontSize: 10, fill: "#64748B", fontWeight: 600, fontFamily: "Inter" }}
+              tickMargin={6}
+              width={40}
               label={{
                 value: `Obciążenie [${unitLabel}]`,
                 angle: -90,
                 position: "insideLeft",
                 offset: 4,
-                fontSize: 10,
+                fontSize: 9,
                 fill: "#94A3B8",
                 fontWeight: 700,
                 style: { textAnchor: "middle" },

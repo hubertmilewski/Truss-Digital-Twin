@@ -27,8 +27,8 @@ function Footer() {
   }, [isConnected, connectionStartTime]);
 
   return (
-    <footer className="bg-surface border-t border-surface-border px-8 py-2 flex justify-between items-center text-[10px] text-brand-secondary font-bold tracking-wider">
-      <div className="flex gap-6 items-center">
+    <footer className="hidden sm:flex bg-surface border-t border-surface-border px-4 sm:px-8 py-2 flex-col sm:flex-row justify-between items-center text-[10px] text-brand-secondary font-bold tracking-wider gap-1 sm:gap-0">
+      <div className="flex gap-4 sm:gap-6 items-center">
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
           CZAS PRACY: {uptime}
@@ -38,7 +38,7 @@ function Footer() {
           STATUS: {isConnected ? (isSignalLost ? 'BRAK SYGNAŁU' : 'POŁĄCZONO') : 'ROZŁĄCZONO'}
         </div>
       </div>
-      <div className="uppercase">
+      <div className="uppercase text-center">
         © 2026 PB System Monitorowania Kratownic | Hubert Milewski
       </div>
     </footer>

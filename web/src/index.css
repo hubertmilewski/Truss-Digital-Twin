@@ -25,12 +25,14 @@
   
   body {
     @apply bg-brand-bg text-brand-text font-sans antialiased;
+    /* Prevent pull-to-refresh and overscroll on mobile */
+    overscroll-behavior: none;
   }
 
   /* Customowy pasek przewijania dla technicznego wyglądu */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -44,4 +46,27 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-brand-primary;
   }
+}
+
+/* Mobile safe area padding for bottom nav */
+@layer utilities {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+/* Smooth entry animation for mobile menu */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: slideDown 200ms ease-out;
 }

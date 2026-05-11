@@ -40,12 +40,12 @@ function SidebarLeft() {
   };
 
   return (
-    <aside className="bg-surface border-r border-surface-border p-6 flex flex-col gap-8 overflow-y-auto">
+    <aside className="bg-surface lg:border-r border-surface-border p-4 sm:p-6 flex flex-col gap-6 sm:gap-8 overflow-y-auto">
       <section>
-        <h3 className="text-xs uppercase font-bold text-brand-secondary mb-5 tracking-widest">
+        <h3 className="text-xs uppercase font-bold text-brand-secondary mb-4 sm:mb-5 tracking-widest">
           Telemetria na żywo
         </h3>
-        <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-1 gap-3 sm:gap-4">
           {sensors.length > 0 ? (
             sensors.map((sensor) => (
               <SensorCard
@@ -56,7 +56,7 @@ function SidebarLeft() {
               />
             ))
           ) : (
-            <div className="text-[10px] text-slate-400 italic text-center py-4 border border-dashed border-surface-border rounded-xl">
+            <div className="col-span-full text-[10px] text-slate-400 italic text-center py-4 border border-dashed border-surface-border rounded-xl">
               Oczekiwanie na konfigurację czujników...
             </div>
           )}
@@ -64,10 +64,10 @@ function SidebarLeft() {
       </section>
 
       <section>
-        <h3 className="text-xs uppercase font-bold text-brand-secondary mb-5 tracking-widest">
+        <h3 className="text-xs uppercase font-bold text-brand-secondary mb-4 sm:mb-5 tracking-widest">
           Ekstrema Badania
         </h3>
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
           {renderExtreme("max", extremeValues.max)}
           {renderExtreme("min", extremeValues.min)}
         </div>

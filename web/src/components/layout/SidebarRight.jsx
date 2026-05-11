@@ -35,10 +35,10 @@ function SidebarRight() {
   };
 
   return (
-    <aside className="bg-surface border-l border-surface-border p-6 flex flex-col gap-6 overflow-y-auto">
+    <aside className="bg-surface lg:border-l border-surface-border p-4 sm:p-6 flex flex-col gap-6 overflow-y-auto">
       {/* Miniatura Modelu 3D */}
-      <section className="flex-2 flex flex-col min-h-[300px]">
-        <h3 className="text-xs uppercase font-bold text-brand-secondary mb-4 tracking-widest">
+      <section className="flex-2 flex flex-col min-h-[250px] sm:min-h-[300px]">
+        <h3 className="text-xs uppercase font-bold text-brand-secondary mb-3 sm:mb-4 tracking-widest">
           Podgląd 3D
         </h3>
         <div className="flex-1 rounded-xl overflow-hidden border border-surface-border relative">

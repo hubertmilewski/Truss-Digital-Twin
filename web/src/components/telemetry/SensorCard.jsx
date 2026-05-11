@@ -3,20 +3,20 @@ function SensorCard({ label, valueG = 0, valueN = 0, maxLoadN = 10 }) {
   const isOverloaded = valueN > maxLoadN * 0.8;
 
   return (
-    <div className="bg-brand-bg border border-surface-border p-3 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex justify-between items-start mb-2">
-        <label className="text-[10px] font-bold text-brand-secondary uppercase tracking-wider">
+    <div className="bg-brand-bg border border-surface-border p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex justify-between items-start mb-1.5 sm:mb-2">
+        <label className="text-[9px] sm:text-[10px] font-bold text-brand-secondary uppercase tracking-wider">
           {label}
         </label>
-        <div className="text-[10px] font-bold text-brand-secondary/60 font-mono">
+        <div className="text-[9px] sm:text-[10px] font-bold text-brand-secondary/60 font-mono">
           {valueG.toFixed(0)}g
         </div>
       </div>
-      <div className="text-4xl font-bold text-brand-primary mb-3 font-mono flex items-baseline">
+      <div className="text-2xl sm:text-4xl font-bold text-brand-primary mb-2 sm:mb-3 font-mono flex items-baseline">
         {valueN.toFixed(2)}
-        <span className="text-sm font-normal text-brand-secondary ml-1">N</span>
+        <span className="text-[10px] sm:text-sm font-normal text-brand-secondary ml-1">N</span>
       </div>
-      <div className="h-1.5 w-full bg-surface-border rounded-full overflow-hidden">
+      <div className="h-1 sm:h-1.5 w-full bg-surface-border rounded-full overflow-hidden">
         <div
           className="h-full transition-all duration-300 ease-out"
           style={{
