@@ -122,8 +122,8 @@ function MainChart() {
       <div className="flex-1 bg-surface border border-surface-border rounded-xl shadow-sm overflow-hidden min-h-[250px] sm:min-h-0">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
-            data={history.length > 0 ? history : [{ time: 0 }]}
-            margin={{ top: 16, right: 16, left: 8, bottom: 12 }}
+            data={history.length > 0 ? history : [{ time: 0, _placeholder: 0 }]}
+            margin={{ top: 16, right: 16, left: 32, bottom: 12 }}
           >
             <CartesianGrid
               strokeDasharray="4 4"
@@ -153,11 +153,12 @@ function MainChart() {
             <YAxis
               domain={yDomain}
               ticks={yTicks}
+              allowDataOverflow={false}
               axisLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
               tickLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
               tick={{ fontSize: 10, fill: "#64748B", fontWeight: 600, fontFamily: "Inter" }}
               tickMargin={6}
-              width={40}
+              width={60}
               label={{
                 value: `Obciążenie [${unitLabel}]`,
                 angle: -90,
@@ -186,6 +187,16 @@ function MainChart() {
               ]}
               labelFormatter={(label) => `Czas: ${label}s`}
               cursor={{ stroke: "#94A3B8", strokeWidth: 1, strokeDasharray: "4 4" }}
+            />
+            {/* Ukryta linia kotwicząca oś Y, gdy nie ma danych */}
+            <Line 
+              type="monotone" 
+              dataKey="_placeholder" 
+              stroke="transparent" 
+              strokeWidth={0} 
+              dot={false} 
+              activeDot={false}
+              isAnimationActive={false}
             />
             {sensors.map((sensor, index) => (
               <Line
