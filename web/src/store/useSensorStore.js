@@ -10,6 +10,7 @@ export const useSensorStore = create((set, get) => ({
   
   isConnected: false,
   isSignalLost: false,
+  connectionError: null,
   connectionStartTime: null,
   isRecording: false,
   startTime: null,
@@ -22,6 +23,7 @@ export const useSensorStore = create((set, get) => ({
   setDisplayUnit: (unit) => set({ displayUnit: unit }),
   setSignalLost: (status) => set({ isSignalLost: status }),
   setSensors: (sensors) => set({ sensors }),
+  setConnectionError: (error) => set({ connectionError: error }),
   
   // Aktualizacja danych + opcjonalne dodawanie do historii
   setSensorData: (newData) => set((state) => {

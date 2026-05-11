@@ -20,6 +20,7 @@ const stopWatchdog = () => {
 
 export const connectSerial = async () => {
   try {
+    useSensorStore.getState().setConnectionError(null);
     port = await navigator.serial.requestPort();
     await port.open({ baudRate: 115200 }); 
     
@@ -28,6 +29,10 @@ export const connectSerial = async () => {
     readLoop();
   } catch (error) {
     console.error("Nie udało się połączyć z portem szeregowym:", error);
+    let errorMsg = "Nie udało się otworzyć portu.";
+    if (error.name === 'NotFoundError') errorMsg = "Nie wybrano urządzenia.";
+    if (error.name === 'SecurityError') errorMsg = "Brak uprawnień do portu.";
+    useSensorStore.getState().setConnectionError(errorMsg);
   }
 };
 
@@ -90,6 +95,11 @@ const readLoop = async () => {
     }
   } catch (error) {
     console.error("Błąd odczytu z portu szeregowego:", error);
+    if (error.name === 'NetworkError') {
+      useSensorStore.getState().setConnectionError("Urządzenie zostało odłączone.");
+    } else {
+      useSensorStore.getState().setConnectionError("Błąd transmisji danych.");
+    }
   } finally {
     if (reader) {
       try {

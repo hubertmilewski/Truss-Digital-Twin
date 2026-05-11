@@ -3,7 +3,7 @@ import { connectSerial, disconnectSerial } from "../../utils/serialManager";
 import logo from "../../assets/pb-logo.png";
 
 function Header() {
-  const { isConnected, isRecording, toggleRecording, isSignalLost } = useSensorStore();
+  const { isConnected, isRecording, toggleRecording, isSignalLost, connectionError, setConnectionError } = useSensorStore();
 
   return (
     <header className="flex justify-between items-center px-8 py-2 bg-surface border-b border-surface-border shadow-sm z-10">
@@ -12,6 +12,17 @@ function Header() {
       </div>
 
       <div className="flex items-center gap-6">
+        {/* Powiadomienie o błędach */}
+        {connectionError && (
+          <div 
+            onClick={() => setConnectionError(null)}
+            className="flex items-center gap-2 px-4 py-2 bg-red-100 border border-red-200 rounded-lg text-red-600 text-[10px] font-bold shadow-sm cursor-pointer hover:bg-red-200 transition-colors"
+            title="Kliknij, aby zamknąć"
+          >
+            <span className="text-sm">❌</span> {connectionError.toUpperCase()}
+          </div>
+        )}
+
         {/* Powiadomienie o utracie sygnału */}
         {isSignalLost && isConnected && (
           <div className="flex items-center gap-2 px-4 py-2 bg-red-100 border border-red-200 rounded-lg text-red-600 text-[10px] font-bold shadow-sm">
