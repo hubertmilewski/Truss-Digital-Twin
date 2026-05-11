@@ -64,34 +64,43 @@ class LoadCell:
 
 
 def main():
-    print("Start...")
+    print("System gotowy. Start odczytów...")
     
-    # Inicjalizacja czujników
+    # Inicjalizacja czujników z danymi z kalibracji
     czujniki = [
         LoadCell(
             name="sensor_A",
             pin_dt=2, 
             pin_sck=3,
-            tara=-382711,
-            wspolczynnik=419823,
-            rozmiar_bufora=15
+            tara=-346790,
+            wspolczynnik=973382,
+            rozmiar_bufora=20
         ),
         LoadCell(
             name="sensor_B",
             pin_dt=4, 
             pin_sck=5,
-            tara=-382711, # Przykładowa tara dla drugiego czujnika
-            wspolczynnik=419823, # Przykładowy współczynnik
-            rozmiar_bufora=15
+            tara=-53350, 
+            wspolczynnik=896836, 
+            rozmiar_bufora=20
+        ),
+        LoadCell(
+            name="sensor_C",
+            pin_dt=6, 
+            pin_sck=7,
+            tara=-97180,
+            wspolczynnik=981618, 
+            rozmiar_bufora=20
         )
     ]
     
-    # Wysyłamy informację o dostępnych czujnikach na starcie
+    # Konfiguracja czujników 
     config_msg = {
         "type": "config",
         "sensors": [
-            {"id": "sensor_A", "label": "Belka Lewa (A)"},
-            {"id": "sensor_B", "label": "Belka Prawa (B)"}
+            {"id": "sensor_A", "label": "Belka (A)"},
+            {"id": "sensor_B", "label": "Belka (B)"},
+            {"id": "sensor_C", "label": "Belka (C)"}
         ]
     }
     print(json.dumps(config_msg))
@@ -119,12 +128,11 @@ def main():
             
             print("{" + ", ".join(json_parts) + "}")
 
-        # Wysyłamy konfigurację co 5 sekund na wypadek, gdyby program na PC połączył się później
+        # Wysyłamy konfigurację co 5 sekund
         if time.ticks_diff(time.ticks_ms(), last_config_time) > 5000:
             print(json.dumps(config_msg))
             last_config_time = time.ticks_ms()
 
-        # Minimalne opóźnienie (1 milisekunda), aby nie spalić procesora Pico
         time.sleep_ms(1)
 
 if __name__ == "__main__":
