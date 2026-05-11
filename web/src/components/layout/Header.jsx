@@ -3,7 +3,7 @@ import { connectSerial, disconnectSerial } from "../../utils/serialManager";
 import logo from "../../assets/pb-logo.png";
 
 function Header() {
-  const { isConnected, isRecording, toggleRecording, isSignalLost, connectionError, setConnectionError } = useSensorStore();
+  const { isConnected, isSignalLost, connectionError, setConnectionError } = useSensorStore();
 
   return (
     <header className="flex justify-between items-center px-8 py-2 bg-surface border-b border-surface-border shadow-sm z-10">
@@ -41,26 +41,12 @@ function Header() {
         {/* Przyciski operacyjne */}
         <div className="flex items-center gap-2">
           {isConnected && (
-            <>
-              <button 
-                onClick={toggleRecording} 
-                className={`flex items-center gap-2 px-5 py-2 rounded-md text-sm font-bold transition-all shadow-sm active:scale-95 ${
-                  isRecording 
-                  ? 'bg-brand-accent text-white hover:bg-red-700' 
-                  : 'bg-emerald-600 text-white hover:bg-emerald-700'
-                }`}
-              >
-                <span className={`w-2 h-2 rounded-full bg-white ${isRecording ? 'animate-pulse' : ''}`}></span>
-                {isRecording ? "STOP POMIAR" : "START POMIAR"}
-              </button>
-
-              <button 
-                onClick={disconnectSerial} 
-                className="px-5 py-2 rounded-md text-sm font-bold text-brand-secondary hover:bg-slate-100 transition-all border border-surface-border active:scale-95 bg-white"
-              >
-                ROZŁĄCZ
-              </button>
-            </>
+            <button 
+              onClick={disconnectSerial} 
+              className="px-5 py-2 rounded-md text-sm font-bold text-brand-secondary hover:bg-slate-100 transition-all border border-surface-border active:scale-95 bg-white"
+            >
+              ROZŁĄCZ
+            </button>
           )}
 
           {!isConnected && (

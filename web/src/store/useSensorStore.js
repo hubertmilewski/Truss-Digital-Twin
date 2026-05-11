@@ -63,7 +63,7 @@ export const useSensorStore = create((set, get) => ({
     });
 
     const newEntry = {
-      ...normalizedData,
+      ...updatedSensorData,
       time: relativeTime,
       timestamp: `${relativeTime}s`
     };

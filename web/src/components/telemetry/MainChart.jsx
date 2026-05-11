@@ -1,28 +1,36 @@
 import { useSensorStore } from "../../store/useSensorStore";
 
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer
-} from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 function MainChart() {
-  const { history, isRecording, displayUnit, setDisplayUnit, sensors } = useSensorStore();
+  const { history, isRecording, isConnected, displayUnit, setDisplayUnit, sensors, toggleRecording } =
+    useSensorStore();
 
-  const isN = displayUnit === 'N';
-  const unitLabel = isN ? 'N' : 'g';
-  const colors = ['var(--color-brand-primary)', 'var(--color-brand-accent)', '#10b981', '#f59e0b', '#8b5cf6'];
+  const isN = displayUnit === "N";
+  const unitLabel = isN ? "N" : "g";
+  const colors = [
+    "#1D4ED8",
+    "#DC2626",
+    "#10b981",
+    "#f59e0b",
+    "#8b5cf6",
+  ];
   const yDomain = isN ? [0, 10] : [0, 1000];
   const yTicks = isN ? [0, 2, 4, 6, 8, 10] : [0, 200, 400, 600, 800, 1000];
 
   // Parametry osi X
-  const currentMaxTime = history.length > 0 ? history[history.length - 1].time : 0;
+  const currentMaxTime =
+    history.length > 0 ? history[history.length - 1].time : 0;
   const xDomainEnd = Math.max(10, Math.ceil(currentMaxTime + 1));
-  
+
   const getXTicks = () => {
     // Obliczamy interwał tak, aby zawsze było około 10-20 ticków
     let interval = 2;
@@ -39,82 +47,154 @@ function MainChart() {
     return ticks;
   };
 
+  // Formatowanie czasu sesji do MM:SS
+  const formatSessionTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    const tenths = Math.floor((seconds % 1) * 10);
+    if (mins > 0) {
+      return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}.${tenths}`;
+    }
+    return `${String(secs).padStart(2, "0")}.${tenths}`;
+  };
+
   return (
-    <section className="bg-slate-50 relative overflow-hidden flex flex-col p-8">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex flex-col gap-1">
-          <h3 className={`${isRecording ? 'text-red-500 animate-pulse' : 'text-brand-secondary'} text-xs uppercase font-bold tracking-widest flex items-center`}>
-            Dynamika Obciążenia
-          </h3>
-          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Jednostka: {isN ? 'Niutony' : 'Gramy'}</span>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="flex bg-white border border-surface-border rounded-lg p-1 shadow-sm">
-            <button 
-              onClick={() => setDisplayUnit('N')}
-              className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${isN ? 'bg-brand-primary text-white shadow-sm' : 'text-brand-secondary hover:bg-slate-50'}`}
+    <section className="bg-brand-bg relative overflow-hidden flex flex-col p-6">
+      {/* Nagłówek sekcji */}
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xs uppercase font-bold text-brand-secondary tracking-widest">
+          Dynamika Obciążenia
+        </h3>
+
+        <div className="flex items-center gap-3">
+          {/* Przełącznik jednostek */}
+          <div className="flex items-center h-11 bg-surface border border-surface-border rounded-lg overflow-hidden shadow-sm">
+            <button
+              onClick={() => setDisplayUnit("N")}
+              className={`px-4 h-full text-xs font-bold tracking-wider transition-all duration-200 ${
+                isN
+                  ? "bg-brand-primary text-white shadow-inner"
+                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-bg"
+              }`}
             >
-              N
+              Niutony
             </button>
-            <button 
-              onClick={() => setDisplayUnit('g')}
-              className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${!isN ? 'bg-brand-primary text-white shadow-sm' : 'text-brand-secondary hover:bg-slate-50'}`}
+            <div className="w-px h-5 bg-surface-border"></div>
+            <button
+              onClick={() => setDisplayUnit("g")}
+              className={`px-4 h-full text-xs font-bold tracking-wider transition-all duration-200 ${
+                !isN
+                  ? "bg-brand-primary text-white shadow-inner"
+                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-bg"
+              }`}
             >
-              g
+              Gramy
             </button>
           </div>
-          
-          <div className="flex items-center gap-1.5 px-3 py-2 bg-white border border-surface-border rounded-lg shadow-sm text-[10px] font-bold text-brand-secondary">
-            CZAS: <span className="text-brand-primary font-mono">{currentMaxTime}s</span>
+
+          {/* Wyświetlacz czasu sesji */}
+          <div className="flex items-center gap-2 px-4 h-11 bg-surface border border-surface-border rounded-lg shadow-sm">
+            <span className="text-[10px] font-bold text-brand-secondary uppercase tracking-widest">Czas</span>
+            <span className="text-sm font-bold font-mono text-brand-text tabular-nums leading-none">
+              {formatSessionTime(currentMaxTime)}
+            </span>
+            <span className="text-[10px] font-bold text-brand-secondary">s</span>
           </div>
+
+          {/* Przycisk START/STOP POMIAR */}
+          {isConnected && (
+            <button
+              onClick={toggleRecording}
+              className={`flex items-center gap-3 px-6 h-11 rounded-lg text-xs font-bold tracking-wider transition-all shadow-sm active:scale-95 ${
+                isRecording
+                  ? "bg-brand-accent text-white hover:bg-red-700"
+                  : "bg-emerald-600 text-white hover:bg-emerald-700"
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full bg-white shrink-0 ${isRecording ? "animate-pulse" : ""}`}></span>
+              <span className="leading-none">{isRecording ? "STOP POMIAR" : "START POMIAR"}</span>
+            </button>
+          )}
         </div>
       </div>
-      
-      <div className="flex-1 bg-white border border-surface-border rounded-2xl shadow-sm p-4">
+
+      {/* Kontener wykresu */}
+      <div className="flex-1 bg-surface border border-surface-border rounded-xl shadow-sm overflow-hidden">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={history.length > 0 ? history : [{ time: 0 }]} margin={{ top: 20, right: 40, left: 20, bottom: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="#f1f5f9" />
-            <XAxis 
-              dataKey="time" 
+          <LineChart
+            data={history.length > 0 ? history : [{ time: 0 }]}
+            margin={{ top: 24, right: 32, left: 16, bottom: 16 }}
+          >
+            <CartesianGrid
+              strokeDasharray="4 4"
+              vertical={true}
+              horizontal={true}
+              stroke="#CBD5E1"
+              strokeOpacity={0.5}
+            />
+            <XAxis
+              dataKey="time"
               type="number"
               domain={[0, xDomainEnd]}
               ticks={getXTicks()}
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 10, fill: '#94a3b8' }}
-              tickMargin={10}
-              label={{ value: 'Sekundy [s]', position: 'bottom', offset: 0, fontSize: 10, fill: '#94a3b8', fontWeight: 700 }}
+              axisLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
+              tickLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
+              tick={{ fontSize: 11, fill: "#64748B", fontWeight: 600, fontFamily: "Inter" }}
+              tickMargin={8}
+              label={{
+                value: `Czas [s]`,
+                position: "insideBottom",
+                offset: -8,
+                fontSize: 10,
+                fill: "#94A3B8",
+                fontWeight: 700,
+              }}
             />
-            <YAxis 
+            <YAxis
               domain={yDomain}
               ticks={yTicks}
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 10, fill: '#94a3b8' }}
-              tickMargin={10}
-              label={{ value: `Obciążenie [${unitLabel}]`, angle: -90, position: 'left', offset: 0, fontSize: 10, fill: '#94a3b8', fontWeight: 700 }}
-            />
-            <Tooltip 
-              contentStyle={{ 
-                borderRadius: '12px', 
-                border: 'none', 
-                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
-                fontSize: '12px',
-                fontWeight: 'bold'
+              axisLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
+              tickLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
+              tick={{ fontSize: 11, fill: "#64748B", fontWeight: 600, fontFamily: "Inter" }}
+              tickMargin={8}
+              label={{
+                value: `Obciążenie [${unitLabel}]`,
+                angle: -90,
+                position: "insideLeft",
+                offset: 4,
+                fontSize: 10,
+                fill: "#94A3B8",
+                fontWeight: 700,
+                style: { textAnchor: "middle" },
               }}
-              formatter={(value) => [`${value} ${unitLabel}`, 'Obciążenie']}
-              labelFormatter={(label) => `${label} sekunda`}
-              cursor={{ stroke: '#e2e8f0', strokeWidth: 2 }}
+            />
+            <Tooltip
+              contentStyle={{
+                borderRadius: "8px",
+                border: "1px solid #E2E8F0",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                fontSize: "11px",
+                fontWeight: "600",
+                fontFamily: "Inter",
+                padding: "8px 12px",
+                background: "#FFFFFF",
+              }}
+              formatter={(value, name) => [
+                `${typeof value === "number" ? value.toFixed(2) : value} ${unitLabel}`,
+                name,
+              ]}
+              labelFormatter={(label) => `Czas: ${label}s`}
+              cursor={{ stroke: "#94A3B8", strokeWidth: 1, strokeDasharray: "4 4" }}
             />
             {sensors.map((sensor, index) => (
-              <Line 
+              <Line
                 key={sensor.id}
-                type="monotone" 
-                dataKey={isN ? `${sensor.id}_N` : `${sensor.id}_g`} 
-                stroke={colors[index % colors.length]} 
-                strokeWidth={3}
+                type="monotone"
+                dataKey={isN ? `${sensor.id}_N` : `${sensor.id}_g`}
+                stroke={colors[index % colors.length]}
+                strokeWidth={2.5}
                 dot={false}
+                activeDot={{ r: 4, strokeWidth: 2, stroke: "#fff" }}
                 isAnimationActive={false}
                 connectNulls={true}
                 name={sensor.label}
