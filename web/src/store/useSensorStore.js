@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 
 export const useSensorStore = create((set, get) => ({
-  // Aktualny odczyt (zawsze aktualizowany)
+  // Aktualny odczyt
   sensorData: {},
-  sensors: [], // Lista czujników z Raspberry: [{id: 'sensor_A', label: 'Belka Lewa (A)'}, ...]
+  sensors: [], // Lista czujników z Raspberry: [{id: 'sensor_A', label: 'Belka (A)'}, ...]
   
   // Historia odczytów w aktywnej sesji
   history: [],
@@ -69,7 +69,7 @@ export const useSensorStore = create((set, get) => ({
     return {
       sensorData: updatedSensorData,
       extremeValues: { max: newMax, min: newMin },
-      history: [...state.history, newEntry].slice(-500)
+      history: [...state.history, newEntry].slice(-50000)
     };
   }),
 

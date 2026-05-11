@@ -24,8 +24,19 @@ function MainChart() {
   const xDomainEnd = Math.max(10, Math.ceil(currentMaxTime + 1));
   
   const getXTicks = () => {
-    // Pokazujemy ticki co 2 sekundy, żeby nie zagracać siatki
-    return Array.from({ length: xDomainEnd + 1 }, (_, i) => i).filter(i => i % 2 === 0);
+    // Obliczamy interwał tak, aby zawsze było około 10-20 ticków
+    let interval = 2;
+    if (xDomainEnd > 60) interval = 5;
+    if (xDomainEnd > 120) interval = 10;
+    if (xDomainEnd > 300) interval = 30;
+    if (xDomainEnd > 600) interval = 60;
+    if (xDomainEnd > 1800) interval = 300;
+
+    const ticks = [];
+    for (let i = 0; i <= xDomainEnd; i += interval) {
+      ticks.push(i);
+    }
+    return ticks;
   };
 
   return (
@@ -105,6 +116,7 @@ function MainChart() {
                 strokeWidth={3}
                 dot={false}
                 isAnimationActive={false}
+                connectNulls={true}
                 name={sensor.label}
               />
             ))}

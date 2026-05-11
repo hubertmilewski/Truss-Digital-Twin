@@ -14,7 +14,7 @@ function Header() {
       <div className="flex items-center gap-6">
         {/* Powiadomienie o utracie sygnału */}
         {isSignalLost && isConnected && (
-          <div className="flex items-center gap-2 px-4 py-2 bg-red-100 border border-red-200 rounded-lg text-red-600 text-[10px] font-bold animate-bounce shadow-sm">
+          <div className="flex items-center gap-2 px-4 py-2 bg-red-100 border border-red-200 rounded-lg text-red-600 text-[10px] font-bold shadow-sm">
             <span className="text-sm">⚠️</span> UTRATA SYGNAŁU Z PICO
           </div>
         )}
