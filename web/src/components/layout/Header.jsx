@@ -11,6 +11,7 @@ import {
   Settings as SettingsIcon,
   Share2,
   Users,
+  Check,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -31,6 +32,7 @@ function Header() {
   const [showSettings, setShowSettings] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [isStartingHost, setIsStartingHost] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const handleShareClick = async () => {
     if (!sessionId) {
@@ -357,11 +359,22 @@ function Header() {
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(shareUrl);
-                        alert("Skopiowano link do schowka!");
+                        setLinkCopied(true);
+                        setTimeout(() => setLinkCopied(false), 2000);
                       }}
-                      className="flex-1 py-2.5 bg-white border border-surface-border text-brand-secondary rounded-lg text-xs font-bold hover:bg-slate-50 transition-colors shadow-sm active:scale-95"
+                      className={`flex-1 py-2.5 border rounded-lg text-xs font-bold transition-colors shadow-sm active:scale-95 flex items-center justify-center gap-2 ${
+                        linkCopied 
+                          ? "bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100" 
+                          : "bg-white border-surface-border text-brand-secondary hover:bg-slate-50"
+                      }`}
                     >
-                      KOPIUJ LINK
+                      {linkCopied ? (
+                        <>
+                          <Check className="w-4 h-4" /> SKOPIOWANO
+                        </>
+                      ) : (
+                        "KOPIUJ LINK"
+                      )}
                     </button>
                     <button
                       onClick={handleStopShare}

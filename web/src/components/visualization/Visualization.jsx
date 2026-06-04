@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useState, useRef } from "react";
+import { Suspense, useMemo, useState, useRef } from "react";
 import { Canvas, useLoader, useFrame } from "@react-three/fiber";
 import { OrbitControls, Environment, Bounds, ContactShadows, Html } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";

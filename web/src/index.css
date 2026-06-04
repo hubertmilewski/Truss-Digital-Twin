@@ -71,21 +71,6 @@
   animation: slideDown 200ms ease-out forwards;
 }
 
-@keyframes slideUpFadeOut {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.95);
-  }
-}
-
-.animate-out {
-  animation: slideUpFadeOut 200ms ease-in forwards;
-}
-
 @keyframes simpleFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

@@ -35,7 +35,7 @@ export const useSensorStore = create((set, get) => ({
   
   setDisplayUnit: (unit) => set({ displayUnit: unit }),
   setSignalLost: (status) => set({ isSignalLost: status }),
-  setSensors: (sensors) => set({ sensors }),
+
   setConnectionError: (error) => set({ connectionError: error }),
   setCustomModelUrl: (url) => set({ customModelUrl: url }),
   
@@ -175,7 +175,7 @@ export const useSensorStore = create((set, get) => ({
     };
   }),
   
-  resetHistory: () => set({ history: [] }),
+
   resetData: () => set({
     sensorData: { sensor_A_g: 0, sensor_A_N: 0 },
     history: [],

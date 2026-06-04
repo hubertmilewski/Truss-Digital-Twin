@@ -10,7 +10,6 @@ import {
   Settings,
   Scale,
   Eye,
-  CheckCircle2,
   Code,
   Expand,
   Minimize2,
