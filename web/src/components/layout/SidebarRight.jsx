@@ -8,6 +8,7 @@ import { saveModelFiles, clearModelFiles } from "../../utils/modelStorage";
 function SidebarRight() {
   const setCustomModelUrl = useSensorStore(state => state.setCustomModelUrl);
   const customModelUrl = useSensorStore(state => state.customModelUrl);
+  const isGuestMode = useSensorStore(state => state.isGuestMode);
   
   const fileInputRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -106,44 +107,46 @@ function SidebarRight() {
         </div>
       </div>
 
-      <section className="flex flex-col gap-3 p-3 sm:p-6 border-t border-surface-border bg-surface">
-        <h3 className="text-xs uppercase font-bold text-brand-secondary mb-2 tracking-widest">
-          System
-        </h3>
-        <button 
-          onClick={exportToExcel}
-          className="w-full py-3 px-4 bg-brand-primary text-white text-xs font-bold rounded-lg hover:bg-blue-800 transition-colors shadow-sm uppercase tracking-widest active:scale-95"
-        >
-          EKSPORTUJ DANE (XLSX)
-        </button>
-        
-        <input 
-          type="file" 
-          webkitdirectory="true"
-          multiple
-          ref={fileInputRef} 
-          className="hidden" 
-          onChange={handleImportModel} 
-        />
-        <div className="flex gap-2">
+      {!isGuestMode && (
+        <section className="flex flex-col gap-3 p-3 sm:p-6 border-t border-surface-border bg-surface">
+          <h3 className="text-xs uppercase font-bold text-brand-secondary mb-2 tracking-widest">
+            System
+          </h3>
           <button 
-            onClick={() => fileInputRef.current?.click()}
-            className="flex-1 py-3 px-4 bg-white text-brand-secondary border border-surface-border text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm uppercase tracking-widest active:scale-95"
+            onClick={exportToExcel}
+            className="w-full py-3 px-4 bg-brand-primary text-white text-xs font-bold rounded-lg hover:bg-blue-800 transition-colors shadow-sm uppercase tracking-widest active:scale-95"
           >
-            {customModelUrl ? 'ZMIEŃ MODEL' : 'IMPORTUJ MODEL (FOLDER)'}
+            EKSPORTUJ DANE (XLSX)
           </button>
           
-          {customModelUrl && (
+          <input 
+            type="file" 
+            webkitdirectory="true"
+            multiple
+            ref={fileInputRef} 
+            className="hidden" 
+            onChange={handleImportModel} 
+          />
+          <div className="flex gap-2">
             <button 
-              onClick={handleClearModel}
-              title="Usuń model z pamięci"
-              className="w-12 flex items-center justify-center bg-white text-red-500 border border-surface-border rounded-lg hover:bg-red-50 transition-colors shadow-sm active:scale-95"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex-1 py-3 px-4 bg-white text-brand-secondary border border-surface-border text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm uppercase tracking-widest active:scale-95"
             >
-              <Trash2 className="w-4 h-4" />
+              {customModelUrl ? 'ZMIEŃ MODEL' : 'IMPORTUJ MODEL (FOLDER)'}
             </button>
-          )}
-        </div>
-      </section>
+            
+            {customModelUrl && (
+              <button 
+                onClick={handleClearModel}
+                title="Usuń model z pamięci"
+                className="w-12 flex items-center justify-center bg-white text-red-500 border border-surface-border rounded-lg hover:bg-red-50 transition-colors shadow-sm active:scale-95"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </section>
+      )}
 
       {(isFullscreen || isClosing) && (
         <div 

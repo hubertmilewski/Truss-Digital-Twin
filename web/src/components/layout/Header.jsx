@@ -122,13 +122,15 @@ function Header() {
               </button>
             )}
 
-            <button
-              onClick={() => setShowSettings(true)}
-              className="p-2 rounded-md hover:bg-slate-100 transition-colors border border-surface-border text-slate-500 hover:text-brand-primary active:scale-95 bg-white"
-              title="Ustawienia ogólne"
-            >
-              <SettingsIcon className="w-4 h-4" />
-            </button>
+            {!isGuestMode && (
+              <button
+                onClick={() => setShowSettings(true)}
+                className="p-2 rounded-md hover:bg-slate-100 transition-colors border border-surface-border text-slate-500 hover:text-brand-primary active:scale-95 bg-white"
+                title="Ustawienia ogólne"
+              >
+                <SettingsIcon className="w-4 h-4" />
+              </button>
+            )}
 
             {!isGuestMode && isConnected && (
               <button
@@ -152,12 +154,14 @@ function Header() {
 
         {/* Mobile: compact status + hamburger */}
         <div className="flex md:hidden items-center gap-2 sm:gap-3">
-          <button
-            onClick={() => setShowSettings(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-lg border border-surface-border bg-white text-slate-500 hover:text-brand-primary active:scale-95"
-          >
-            <SettingsIcon className="w-4 h-4" />
-          </button>
+          {!isGuestMode && (
+            <button
+              onClick={() => setShowSettings(true)}
+              className="w-9 h-9 flex items-center justify-center rounded-lg border border-surface-border bg-white text-slate-500 hover:text-brand-primary active:scale-95"
+            >
+              <SettingsIcon className="w-4 h-4" />
+            </button>
+          )}
 
           {/* Compact status indicator */}
           <div

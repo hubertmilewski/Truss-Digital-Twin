@@ -60,6 +60,7 @@ function CustomModel({ modelData, isFullscreen }) {
   const setMeshSensorMapping = useSensorStore(state => state.setMeshSensorMapping);
   const maxLoadN = useSensorStore(state => state.maxLoadN);
   const displayUnit = useSensorStore(state => state.displayUnit);
+  const isGuestMode = useSensorStore(state => state.isGuestMode);
   
   const [selectedMesh, setSelectedMesh] = useState(null);
 
@@ -137,6 +138,7 @@ function CustomModel({ modelData, isFullscreen }) {
 
   const handlePointerDown = (e) => {
     e.stopPropagation();
+    if (isGuestMode) return;
     if (e.object.isMesh && isFullscreen) {
       setSelectedMesh({
         path: e.object.userData.path,
