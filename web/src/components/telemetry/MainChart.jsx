@@ -11,7 +11,7 @@ import {
 } from "recharts";
 
 function MainChart() {
-  const { history, isRecording, isConnected, displayUnit, setDisplayUnit, sensors, toggleRecording } =
+  const { history, isRecording, isConnected, displayUnit, setDisplayUnit, sensors, toggleRecording, isGuestMode } =
     useSensorStore();
 
   const isN = displayUnit === "N";
@@ -101,8 +101,8 @@ function MainChart() {
             <span className="text-[9px] sm:text-[10px] font-bold text-brand-secondary">s</span>
           </div>
 
-          {/* Przycisk START/STOP POMIAR */}
-          {isConnected && (
+          {/* Przycisk START/STOP POMIAR (Tylko Host) */}
+          {isConnected && !isGuestMode && (
             <button
               onClick={toggleRecording}
               className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-6 h-9 sm:h-11 rounded-lg text-[10px] sm:text-xs font-bold tracking-wider transition-all shadow-sm active:scale-95 ${
@@ -113,6 +113,21 @@ function MainChart() {
             >
               <span className="leading-none">{isRecording ? "STOP" : "START"}</span>
             </button>
+          )}
+
+          {/* Status nagrywania (Tylko Widz) */}
+          {isGuestMode && (
+            <div className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-6 h-9 sm:h-11 rounded-lg text-[10px] sm:text-xs font-bold tracking-wider shadow-sm ${
+              isRecording
+                ? "bg-brand-accent/20 text-brand-accent border border-brand-accent/30"
+                : "bg-slate-100 text-slate-400 border border-slate-200"
+            }`}>
+              {isRecording ? (
+                <><span className="w-2 h-2 rounded-full bg-brand-accent animate-pulse"></span> TRWA POMIAR</>
+              ) : (
+                "CZEKAM NA HOSTA"
+              )}
+            </div>
           )}
         </div>
       </div>

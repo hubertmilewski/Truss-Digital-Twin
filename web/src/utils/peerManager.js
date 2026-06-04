@@ -1,5 +1,6 @@
 import Peer from 'peerjs';
 import { useSensorStore } from '../store/useSensorStore';
+import { getModelFiles } from './modelStorage';
 
 let peer = null;
 let connections = [];
@@ -7,24 +8,18 @@ let hostConnection = null;
 let lastBroadcastTime = 0;
 
 export const PeerManager = {
-  // Dla hosta: rozpoczyna sesję, zwraca wygenerowane ID
   initHost: () => {
     return new Promise((resolve, reject) => {
-      // Generujemy przyjazne ID (np. pb-1234)
       const randomId = 'pb-' + Math.floor(1000 + Math.random() * 9000);
       
-      peer = new Peer(randomId, {
-        debug: 2
-      });
+      peer = new Peer(randomId, { debug: 2 });
 
       peer.on('open', (id) => {
-        console.log('Sesja P2P rozpoczęta. Twoje ID:', id);
         useSensorStore.getState().setSessionId(id);
         resolve(id);
       });
 
       peer.on('connection', (conn) => {
-        console.log('Nowy widz dołączył:', conn.peer);
         connections.push(conn);
         useSensorStore.getState().setViewerCount(connections.length);
 
@@ -33,18 +28,25 @@ export const PeerManager = {
           useSensorStore.getState().setViewerCount(connections.length);
         });
 
-        // Kiedy gość się podłącza, możemy mu wysłać bieżący model i mapowania
-        // Wysłanie stanu początkowego (np. model meshSensorMap)
-        conn.on('open', () => {
+        conn.on('open', async () => {
           const state = useSensorStore.getState();
           conn.send({
             type: 'INIT',
             payload: {
               meshSensorMap: state.meshSensorMap,
               maxLoadN: state.maxLoadN,
-              displayUnit: state.displayUnit
+              displayUnit: state.displayUnit,
+              isRecording: state.isRecording
             }
           });
+
+          const files = await getModelFiles();
+          if (files && files.length > 0) {
+            conn.send({
+              type: 'MODEL_FILES',
+              payload: files
+            });
+          }
         });
       });
 
@@ -55,17 +57,14 @@ export const PeerManager = {
     });
   },
 
-  // Rozsyłanie danych (odpalane z serialManager)
-  broadcastData: (data) => {
+  broadcastData: (data, isRecording) => {
     if (!peer || connections.length === 0) return;
     
-    // Ograniczenie do ~30 fps dla widzów żeby nie zabić im baterii na telefonach
     const now = Date.now();
     if (now - lastBroadcastTime < 33) return;
     lastBroadcastTime = now;
 
-    // Pakujemy dane w format JSON dla data channel
-    const message = { type: 'TELEMETRY', payload: data };
+    const message = { type: 'TELEMETRY', payload: data, isRecording };
     
     connections.forEach(conn => {
       if (conn.open) {
@@ -74,7 +73,6 @@ export const PeerManager = {
     });
   },
 
-  // Zatrzymanie sesji
   stopHost: () => {
     if (peer) {
       peer.destroy();
@@ -84,45 +82,58 @@ export const PeerManager = {
     useSensorStore.getState().setSessionId(null);
     useSensorStore.getState().setViewerCount(0);
   },
-
-  // --------- TRYB WIDZA (TELEFON) ---------
   
   initViewer: (hostId) => {
     return new Promise((resolve, reject) => {
       peer = new Peer({ debug: 2 });
 
       peer.on('open', () => {
-        console.log('Łączenie z sesją:', hostId);
         hostConnection = peer.connect(hostId);
         
         hostConnection.on('open', () => {
-          console.log('Połączono z hostem!');
           useSensorStore.getState().setIsGuestMode(true);
           resolve(true);
         });
 
         hostConnection.on('data', (msg) => {
+          const state = useSensorStore.getState();
+          
           if (msg.type === 'TELEMETRY') {
-            useSensorStore.getState().setSensorData(msg.payload);
+            state.setSensorData(msg.payload);
+            if (msg.isRecording && !state.isRecording) {
+              state.startRecording();
+            } else if (!msg.isRecording && state.isRecording) {
+              state.stopRecording();
+            }
           } else if (msg.type === 'INIT') {
-            // Przejęcie konfiguracji modelu
-            const state = useSensorStore.getState();
-            // Można tu zaktualizować store
-            // state.setMeshSensorMap(msg.payload.meshSensorMap); // to wymaga nowej akcji w store
-            // na razie pomijamy pełną synchronizację modelu, chyba że dodamy akcje
+            state.syncGuestConfig(msg.payload);
+            if (msg.payload.isRecording && !state.isRecording) {
+              state.startRecording();
+            }
+          } else if (msg.type === 'MODEL_FILES') {
+            const files = msg.payload;
+            const gltfFile = files.find(f => f.name.toLowerCase().endsWith('.gltf') || f.name.toLowerCase().endsWith('.glb'));
+            if (gltfFile) {
+              const fileMap = {};
+              files.forEach(f => {
+                fileMap[f.name] = URL.createObjectURL(new Blob([f]));
+              });
+              state.setCustomModelUrl({
+                mainUrl: fileMap[gltfFile.name],
+                fileMap: fileMap
+              });
+            }
           }
         });
 
         hostConnection.on('close', () => {
-          console.log('Host zakończył sesję.');
           alert("Sesja została zakończona przez udostępniającego.");
-          window.location.href = '/'; // Reset do strony głównej
+          window.location.href = '/'; 
         });
       });
 
       peer.on('error', (err) => {
-        console.error('Błąd gościa PeerJS:', err);
-        alert("Nie udało się połączyć. Sprawdź czy kod jest poprawny lub czy host nie zamknął sesji.");
+        alert("Nie udało się połączyć z hostem.");
         reject(err);
       });
     });

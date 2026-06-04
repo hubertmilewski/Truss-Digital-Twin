@@ -95,8 +95,9 @@ const readLoop = async () => {
           if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
             try {
               const parsedData = JSON.parse(trimmed);
-              useSensorStore.getState().setSensorData(parsedData);
-              import('./peerManager').then(m => m.PeerManager.broadcastData(parsedData));
+              const state = useSensorStore.getState();
+              state.setSensorData(parsedData);
+              import('./peerManager').then(m => m.PeerManager.broadcastData(parsedData, state.isRecording));
             } catch {
               console.warn("Zignorowano uszkodzoną paczkę danych:", trimmed);
             }
