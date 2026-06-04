@@ -24,6 +24,16 @@ export const connectSerial = async () => {
     port = await navigator.serial.requestPort();
     await port.open({ baudRate: 115200 }); 
     
+    // Wymuszenie sygnałów DTR/RTS, aby Raspberry Pi Pico/MicroPython wiedział, że terminal jest gotowy
+    try {
+      await port.setSignals({ dataTerminalReady: false, requestToSend: false });
+      await new Promise(r => setTimeout(r, 100));
+      await port.setSignals({ dataTerminalReady: true, requestToSend: true });
+      await new Promise(r => setTimeout(r, 100));
+    } catch (err) {
+      console.warn("Nie udało się ustawić sygnałów (DTR/RTS), ignoruję...", err);
+    }
+    
     useSensorStore.getState().setIsConnected(true);
     useSensorStore.getState().setSignalLost(false);
     readLoop();
