@@ -18,6 +18,20 @@ export const useSensorStore = create((set, get) => ({
   extremeValues: {}, // format: { 'sensor_A': { max: { valueG, valueN, time }, min: { valueG, valueN, time } } }
   customModelUrl: null,
   
+  // Konfiguracja sprzętu i tutorialu
+  maxLoadN: 10, // Domyślnie 10 N
+  tutorialCompleted: localStorage.getItem('pb_tutorial') === 'true',
+  
+  setMaxLoadN: (val) => set({ maxLoadN: val }),
+  completeTutorial: () => {
+    localStorage.setItem('pb_tutorial', 'true');
+    set({ tutorialCompleted: true });
+  },
+  resetTutorial: () => {
+    localStorage.removeItem('pb_tutorial');
+    set({ tutorialCompleted: false });
+  },
+  
   setDisplayUnit: (unit) => set({ displayUnit: unit }),
   setSignalLost: (status) => set({ isSignalLost: status }),
   setSensors: (sensors) => set({ sensors }),

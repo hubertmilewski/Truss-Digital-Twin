@@ -2,7 +2,7 @@ import { useSensorStore } from "../../store/useSensorStore";
 import SensorCard from "../telemetry/SensorCard";
 
 function SidebarLeft() {
-  const { sensorData, extremeValues, displayUnit, sensors, isConnected } =
+  const { sensorData, extremeValues, displayUnit, sensors, isConnected, maxLoadN } =
     useSensorStore();
 
   const isN = displayUnit === "N";
@@ -21,6 +21,7 @@ function SidebarLeft() {
                 label={sensor.label}
                 valueG={sensorData[`${sensor.id}_g`] || 0}
                 valueN={sensorData[`${sensor.id}_N`] || 0}
+                maxLoadN={maxLoadN}
               />
             ))
           ) : (

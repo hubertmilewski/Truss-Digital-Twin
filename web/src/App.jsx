@@ -6,12 +6,14 @@ import MainChart from './components/telemetry/MainChart';
 import SidebarRight from './components/layout/SidebarRight';
 import Footer from './components/layout/Footer';
 import MobileNav from './components/layout/MobileNav';
+import TutorialWizard from './components/tutorial/TutorialWizard';
 
 function App() {
   const [activeTab, setActiveTab] = useState('chart');
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-brand-bg text-brand-text">
+      <TutorialWizard />
       <IntroAnimation />
       <Header />
 
