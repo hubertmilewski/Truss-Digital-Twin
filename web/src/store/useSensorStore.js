@@ -19,11 +19,13 @@ export const useSensorStore = create((set, get) => ({
     max: null,
     min: null,
   },
+  customModelUrl: null,
   
   setDisplayUnit: (unit) => set({ displayUnit: unit }),
   setSignalLost: (status) => set({ isSignalLost: status }),
   setSensors: (sensors) => set({ sensors }),
   setConnectionError: (error) => set({ connectionError: error }),
+  setCustomModelUrl: (url) => set({ customModelUrl: url }),
   
   // Aktualizacja danych + opcjonalne dodawanie do historii
   setSensorData: (newData) => set((state) => {
