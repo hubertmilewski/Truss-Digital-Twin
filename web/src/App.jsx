@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import IntroAnimation from './components/layout/IntroAnimation';
 import Header from './components/layout/Header';
 import SidebarLeft from './components/layout/SidebarLeft';
 import MainChart from './components/telemetry/MainChart';
@@ -11,6 +12,7 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-brand-bg text-brand-text">
+      <IntroAnimation />
       <Header />
 
       {/* Desktop layout: 3-column grid */}
