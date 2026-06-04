@@ -40,8 +40,7 @@ function Header() {
           )}
 
           {/* Status połączenia */}
-          <div className={`flex items-center gap-3 px-4 py-2 rounded-full text-xs font-bold tracking-widest bg-brand-bg ${isConnected ? (isSignalLost ? 'text-amber-500' : 'text-emerald-500') : 'text-brand-accent'}`}>
-            <span className={`w-2 h-2 rounded-full bg-current shadow-[0_0_8px_currentColor] ${isConnected && !isSignalLost ? 'animate-pulse' : ''}`}></span>
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-md text-[11px] font-bold tracking-widest shadow-sm border ${isConnected ? (isSignalLost ? 'bg-amber-500/10 text-amber-600 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20') : 'bg-red-500/5 text-red-500 border-red-500/20'}`}>
             {isConnected 
               ? (isSignalLost ? "BRAK DANYCH" : "PODŁĄCZONO") 
               : "NIE PODŁĄCZONO"}
@@ -72,8 +71,8 @@ function Header() {
         {/* Mobile: compact status + hamburger */}
         <div className="flex md:hidden items-center gap-3">
           {/* Compact status indicator */}
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wider bg-brand-bg ${isConnected ? (isSignalLost ? 'text-amber-500' : 'text-emerald-500') : 'text-brand-accent'}`}>
-            <span className={`w-1.5 h-1.5 rounded-full bg-current shadow-[0_0_6px_currentColor] ${isConnected && !isSignalLost ? 'animate-pulse' : ''}`}></span>
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-bold tracking-wider shadow-sm border ${isConnected ? (isSignalLost ? 'bg-amber-500/10 text-amber-600 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20') : 'bg-red-500/5 text-red-500 border-red-500/20'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full bg-current ${isConnected && !isSignalLost ? 'animate-pulse shadow-[0_0_6px_currentColor]' : ''}`}></span>
             {isConnected ? (isSignalLost ? "BRAK" : "OK") : "OFF"}
           </div>
 
@@ -112,8 +111,8 @@ function Header() {
           )}
 
           {/* Status bar */}
-          <div className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold tracking-widest bg-brand-bg ${isConnected ? (isSignalLost ? 'text-amber-500' : 'text-emerald-500') : 'text-brand-accent'}`}>
-            <span className={`w-2 h-2 rounded-full bg-current shadow-[0_0_8px_currentColor] ${isConnected && !isSignalLost ? 'animate-pulse' : ''}`}></span>
+          <div className={`flex items-center gap-2.5 px-4 py-2.5 rounded-lg text-xs font-bold tracking-widest shadow-sm border ${isConnected ? (isSignalLost ? 'bg-amber-500/10 text-amber-600 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20') : 'bg-red-500/5 text-red-500 border-red-500/20'}`}>
+            <span className={`w-2 h-2 rounded-full bg-current ${isConnected && !isSignalLost ? 'animate-pulse shadow-[0_0_8px_currentColor]' : ''}`}></span>
             {isConnected 
               ? (isSignalLost ? "BRAK DANYCH" : "PODŁĄCZONO") 
               : "NIE PODŁĄCZONO"}

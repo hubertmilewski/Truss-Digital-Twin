@@ -111,7 +111,6 @@ function MainChart() {
                   : "bg-emerald-600 text-white hover:bg-emerald-700"
               }`}
             >
-              <span className={`w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-white shrink-0 ${isRecording ? "animate-pulse" : ""}`}></span>
               <span className="leading-none">{isRecording ? "STOP" : "START"}</span>
             </button>
           )}
