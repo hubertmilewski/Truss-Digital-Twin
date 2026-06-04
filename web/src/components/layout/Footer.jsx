@@ -39,7 +39,7 @@ function Footer() {
         </div>
       </div>
       <div className="uppercase text-center">
-        © 2026 PB System Monitorowania Kratownic | Hubert Milewski
+        © 2026 PB System Wyświetlania Obciążeń
       </div>
     </footer>
   );
