@@ -39,6 +39,21 @@ export const useSensorStore = create((set, get) => ({
   setConnectionError: (error) => set({ connectionError: error }),
   setCustomModelUrl: (url) => set({ customModelUrl: url }),
   
+  // Stan sieciowy
+  sessionId: null,
+  viewerCount: 0,
+  isGuestMode: false,
+  
+  setSessionId: (id) => set({ sessionId: id }),
+  setViewerCount: (count) => set({ viewerCount: count }),
+  setIsGuestMode: (status) => set({ isGuestMode: status }),
+  
+  syncGuestConfig: (config) => set((state) => ({
+    meshSensorMap: config.meshSensorMap || state.meshSensorMap,
+    maxLoadN: config.maxLoadN || state.maxLoadN,
+    displayUnit: config.displayUnit || state.displayUnit
+  })),
+
   setMeshSensorMapping: (meshId, sensorId) => set((state) => {
     const newMap = { ...state.meshSensorMap };
     // Jeśli ten czujnik był przypisany do innej belki, usuwamy to powiązanie (1 do 1)

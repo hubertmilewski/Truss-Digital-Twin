@@ -14,6 +14,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('chart');
 
   useEffect(() => {
+    // Ładowanie modelu z IndexedDB
     getModelFiles().then(files => {
       if (files && files.length > 0) {
         const gltfFile = files.find(f => f.name.toLowerCase().endsWith('.gltf') || f.name.toLowerCase().endsWith('.glb'));
@@ -29,6 +30,17 @@ function App() {
         }
       }
     });
+
+    // Sprawdzanie czy url zawiera zaproszenie do sesji P2P
+    const params = new URLSearchParams(window.location.search);
+    const sessionToJoin = params.get('session');
+    if (sessionToJoin) {
+      import('./utils/peerManager').then(m => {
+        m.PeerManager.initViewer(sessionToJoin).catch(console.error);
+      });
+      // Czyszczenie URL żeby nie próbował łączyć ponownie przy przeładowaniu F5
+      window.history.replaceState({}, document.title, "/");
+    }
   }, []);
 
   return (
