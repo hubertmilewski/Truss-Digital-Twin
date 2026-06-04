@@ -514,9 +514,10 @@ function TutorialWizard() {
                     Prawy Panel
                   </h4>
                   <p className="text-sm text-slate-600 text-center max-w-sm">
-                    Przyciski do <strong>eksportu badań (XLSX)</strong> oraz
-                    wgrywania cyfrowego bliźniaka 3D (.glb). Podgląd modelu
-                    posiada opcję pracy w trybie pełnoekranowym.
+                    Opcje <strong>eksportu badań (XLSX)</strong> oraz
+                    wgrywania cyfrowego bliźniaka 3D (import folderu). W trybie
+                    pełnoekranowym modelu możesz <strong>kliknąć na dowolną belkę</strong>,
+                    aby przypisać do niej czujnik telemetrii!
                   </p>
                 </div>
               </div>
