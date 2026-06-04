@@ -15,10 +15,7 @@ export const useSensorStore = create((set, get) => ({
   isRecording: false,
   startTime: null,
   displayUnit: 'N',
-  extremeValues: {
-    max: null,
-    min: null,
-  },
+  extremeValues: {}, // format: { 'sensor_A': { max: { valueG, valueN, time }, min: { valueG, valueN, time } } }
   customModelUrl: null,
   
   setDisplayUnit: (unit) => set({ displayUnit: unit }),
@@ -64,21 +61,26 @@ export const useSensorStore = create((set, get) => ({
     const relativeTime = parseFloat(((currentTime - state.startTime) / 1000).toFixed(1));
 
     // Szukamy ekstremów w nowej paczce danych
-    let newMax = state.extremeValues.max;
-    let newMin = state.extremeValues.min;
+    let newExtremeValues = { ...state.extremeValues };
 
     // Przeszukujemy klucze kończące się na _g (gramy)
     Object.keys(normalizedData).forEach(key => {
       if (key.endsWith('_g')) {
-        const sensorId = key.replace('_g', '').replace('sensor_', '');
+        const fullSensorId = key.replace('_g', ''); // np. 'sensor_A'
         const valG = normalizedData[key];
         const valN = normalizedData[key.replace('_g', '_N')] || 0;
 
-        if (!newMax || valG > newMax.valueG) {
-          newMax = { valueG: valG, valueN: valN, sensor: sensorId, time: relativeTime };
+        if (!newExtremeValues[fullSensorId]) {
+          newExtremeValues[fullSensorId] = { max: null, min: null };
         }
-        if (!newMin || valG < newMin.valueG) {
-          newMin = { valueG: valG, valueN: valN, sensor: sensorId, time: relativeTime };
+
+        const currentExt = newExtremeValues[fullSensorId];
+
+        if (!currentExt.max || valG > currentExt.max.valueG) {
+          currentExt.max = { valueG: valG, valueN: valN, time: relativeTime };
+        }
+        if (!currentExt.min || valG < currentExt.min.valueG) {
+          currentExt.min = { valueG: valG, valueN: valN, time: relativeTime };
         }
       }
     });
@@ -91,7 +93,7 @@ export const useSensorStore = create((set, get) => ({
 
     return {
       sensorData: updatedSensorData,
-      extremeValues: { max: newMax, min: newMin },
+      extremeValues: newExtremeValues,
       history: [...state.history, newEntry].slice(-50000),
       ...(sensorsChanged ? { sensors: newSensors } : {})
     };
@@ -105,7 +107,7 @@ export const useSensorStore = create((set, get) => ({
       isRecording: switchingOn,
       startTime: switchingOn ? new Date().getTime() : state.startTime,
       history: switchingOn ? [] : state.history,
-      extremeValues: switchingOn ? { max: null, min: null } : state.extremeValues
+      extremeValues: switchingOn ? {} : state.extremeValues
     };
   }),
   
@@ -115,7 +117,7 @@ export const useSensorStore = create((set, get) => ({
     history: [],
     startTime: null,
     isRecording: false,
-    extremeValues: { max: null, min: null }
+    extremeValues: {}
   }),
   setIsConnected: (status) => set({ 
     isConnected: status,
