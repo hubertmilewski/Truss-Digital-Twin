@@ -27,6 +27,7 @@ import headerImg from "../../assets/images/header.png";
 import leftsideImg from "../../assets/images/leftside.png";
 import mainsideImg from "../../assets/images/mainside.png";
 import rightsideImg from "../../assets/images/rightside.png";
+import shareImg from "../../assets/images/share.png";
 
 function CodeBlock({ code, filename }) {
   const [copied, setCopied] = useState(false);
@@ -207,7 +208,7 @@ function TutorialWizard() {
   // Autoodtwarzanie prezentacji w ostatnim kroku
   useEffect(() => {
     let timer;
-    if (step === 4 && tourSlide < 3) {
+    if (step === 4 && tourSlide < 4) {
       timer = setTimeout(() => {
         setTourSlide((prev) => prev + 1);
       }, 8000); // 8 sekund na każdy slajd
@@ -221,7 +222,7 @@ function TutorialWizard() {
     if (step === 3 && (!maxLoadN || maxLoadN <= 0)) return;
     if (step < 4) {
       setStep(step + 1);
-    } else if (tourSlide < 3) {
+    } else if (tourSlide < 4) {
       setTourSlide(tourSlide + 1);
     } else {
       completeTutorial();
@@ -458,8 +459,9 @@ function TutorialWizard() {
                     Górny Pasek
                   </h4>
                   <p className="text-sm text-slate-600 text-center max-w-sm">
-                    Znajdziesz tu przycisk <strong>PODŁĄCZ PICO</strong> (wymagany
-                    do odbierania danych po USB) oraz status połączenia.
+                    Znajdziesz tu przycisk <strong>PODŁĄCZ PICO</strong>, status
+                    połączenia oraz opcję <strong>UDOSTĘPNIJ SESJĘ</strong> na
+                    żywo dla innych widzów.
                   </p>
                 </div>
 
@@ -520,11 +522,28 @@ function TutorialWizard() {
                     aby przypisać do niej czujnik telemetrii!
                   </p>
                 </div>
+                {/* Slajd 5 */}
+                <div className="w-full shrink-0 px-2 flex flex-col items-center">
+                  <div className="w-full h-56 sm:h-72 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
+                    <img
+                      src={shareImg}
+                      alt="Udostępnianie Sesji"
+                      className="max-w-full max-h-full object-contain drop-shadow-lg rounded-md border border-slate-200/50"
+                    />
+                  </div>
+                  <h4 className="font-bold text-brand-primary text-base uppercase mb-2 text-center">
+                    Udostępnianie i Dołączanie
+                  </h4>
+                  <p className="text-sm text-slate-600 text-center max-w-sm">
+                    Po wygenerowaniu sesji otrzymasz kod dostępu oraz kod QR. Widzowie
+                    mogą wejść na tę samą stronę i wpisać kod lub zeskanować QR, by na żywo podglądać Twoje odczyty (w trybie <strong>WIDZA</strong> P2P).
+                  </p>
+                </div>
               </div>
 
               {/* Kropki nawigacji */}
               <div className="flex justify-center gap-2 mt-6">
-                {[0, 1, 2, 3].map((idx) => (
+                {[0, 1, 2, 3, 4].map((idx) => (
                   <button
                     key={idx}
                     onClick={() => setTourSlide(idx)}
@@ -586,7 +605,7 @@ function TutorialWizard() {
                 : "bg-brand-primary text-white hover:bg-blue-800"
             }`}
           >
-            {step === 4 && tourSlide === 3 ? (
+            {step === 4 && tourSlide === 4 ? (
               <>
                 ROZPOCZNIJ PRACĘ <Check className="w-4 h-4" />
               </>
