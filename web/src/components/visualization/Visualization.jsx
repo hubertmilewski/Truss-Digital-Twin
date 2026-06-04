@@ -234,7 +234,7 @@ function Visualization({ isMiniature = false }) {
             <directionalLight position={[-5, 5, -5]} intensity={0.5} />
             
             <Suspense fallback={null}>
-              <Bounds fit clip observe margin={isMiniature ? 1.5 : 1.2}>
+              <Bounds fit clip margin={isMiniature ? 1.5 : 1.2}>
                 <CustomModel modelData={customModelUrl} isFullscreen={!isMiniature} />
               </Bounds>
               <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={10} blur={2} far={4} />
@@ -245,6 +245,8 @@ function Visualization({ isMiniature = false }) {
               makeDefault 
               enablePan={!isMiniature} 
               enableZoom={!isMiniature} 
+              autoRotate={isMiniature}
+              autoRotateSpeed={1.5}
             />
           </Canvas>
         </div>
