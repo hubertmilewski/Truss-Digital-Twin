@@ -228,7 +228,7 @@ function Visualization({ isMiniature = false }) {
 
       {customModelUrl && (
         <div className="absolute inset-0 z-10 cursor-move">
-          <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
+          <Canvas shadows={{ type: THREE.PCFShadowMap }} camera={{ position: [0, 0, 5], fov: 45 }}>
             <ambientLight intensity={0.7} />
             <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-mapSize={1024} />
             <directionalLight position={[-5, 5, -5]} intensity={0.5} />

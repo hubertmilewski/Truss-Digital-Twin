@@ -134,7 +134,7 @@ function MainChart() {
 
       {/* Kontener wykresu */}
       <div className="flex-1 bg-surface border border-surface-border rounded-xl shadow-sm overflow-hidden min-h-[250px] sm:min-h-0">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
           <LineChart
             data={history.length > 0 ? history : [{ time: 0, _placeholder: 0 }]}
             margin={{ top: 16, right: 16, left: 32, bottom: 12 }}
