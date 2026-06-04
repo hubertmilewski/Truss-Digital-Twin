@@ -1,9 +1,11 @@
+import { useRef } from "react";
 import { useSensorStore } from "../../store/useSensorStore";
 import Visualization from "../visualization/Visualization";
 import * as XLSX from "xlsx";
 
 function SidebarRight() {
-  const { history, sensors } = useSensorStore();
+  const { history, sensors, setCustomModelUrl, customModelUrl } = useSensorStore();
+  const fileInputRef = useRef(null);
 
   const exportToExcel = () => {
     if (history.length === 0) {
@@ -34,6 +36,18 @@ function SidebarRight() {
     XLSX.writeFile(workbook, fileName);
   };
 
+  const handleImportModel = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Zwolnij poprzedni adres URL, jeśli istnieje, aby zapobiec wyciekom pamięci
+      if (customModelUrl) {
+        URL.revokeObjectURL(customModelUrl);
+      }
+      const url = URL.createObjectURL(file);
+      setCustomModelUrl(url);
+    }
+  };
+
   return (
     <aside className="bg-surface lg:border-l border-surface-border flex flex-col h-full overflow-hidden relative">
       <div className="flex-3 relative overflow-hidden">
@@ -56,6 +70,20 @@ function SidebarRight() {
           className="w-full py-3 px-4 bg-brand-primary text-white text-xs font-bold rounded-lg hover:bg-blue-800 transition-colors shadow-sm uppercase tracking-widest active:scale-95"
         >
           EKSPORTUJ DANE (XLSX)
+        </button>
+        
+        <input 
+          type="file" 
+          accept=".gltf,.glb" 
+          ref={fileInputRef} 
+          className="hidden" 
+          onChange={handleImportModel} 
+        />
+        <button 
+          onClick={() => fileInputRef.current?.click()}
+          className="w-full py-3 px-4 bg-white text-brand-secondary border border-surface-border text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm uppercase tracking-widest active:scale-95"
+        >
+          IMPORTUJ MODEL 3D
         </button>
       </section>
     </aside>
