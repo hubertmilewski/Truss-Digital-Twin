@@ -2,7 +2,7 @@ import { useSensorStore } from "../../store/useSensorStore";
 import SensorCard from "../telemetry/SensorCard";
 
 function SidebarLeft() {
-  const { sensorData, extremeValues, displayUnit, sensors } = useSensorStore();
+  const { sensorData, extremeValues, displayUnit, sensors, isConnected } = useSensorStore();
 
   const isN = displayUnit === "N";
 
@@ -57,7 +57,7 @@ function SidebarLeft() {
             ))
           ) : (
             <div className="col-span-full text-[10px] text-slate-400 italic text-center py-4 border border-dashed border-surface-border rounded-xl">
-              Oczekiwanie na konfigurację czujników...
+              {isConnected ? "Oczekiwanie na przesłanie pierwszych danych..." : "Oczekiwanie na podłączenie urządzenia..."}
             </div>
           )}
         </div>
