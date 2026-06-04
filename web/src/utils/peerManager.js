@@ -49,9 +49,18 @@ export const PeerManager = {
             const files = await getModelFiles();
             if (files && files.length > 0) {
               console.log("[P2P] Wysyłam pliki modelu (ilość):", files.length);
+              
+              const filesToSend = await Promise.all(files.map(async f => {
+                return {
+                  name: f.name,
+                  type: f.type,
+                  buffer: await f.arrayBuffer()
+                };
+              }));
+
               conn.send({
                 type: 'MODEL_FILES',
-                payload: files
+                payload: filesToSend
               });
             }
           } catch (e) {
@@ -127,17 +136,23 @@ export const PeerManager = {
             }
           } else if (msg.type === 'MODEL_FILES') {
             console.log("[P2P] Otrzymano pliki modelu z sieci!");
-            const files = msg.payload;
-            const gltfFile = files.find(f => f.name.toLowerCase().endsWith('.gltf') || f.name.toLowerCase().endsWith('.glb'));
-            if (gltfFile) {
-              const fileMap = {};
-              files.forEach(f => {
-                fileMap[f.name] = URL.createObjectURL(new Blob([f]));
-              });
-              state.setCustomModelUrl({
-                mainUrl: fileMap[gltfFile.name],
-                fileMap: fileMap
-              });
+            try {
+              const files = msg.payload;
+              const gltfFile = files.find(f => f.name && (f.name.toLowerCase().endsWith('.gltf') || f.name.toLowerCase().endsWith('.glb')));
+              if (gltfFile) {
+                console.log("[P2P] Budowanie modelu po stronie gościa:", gltfFile.name);
+                const fileMap = {};
+                files.forEach(f => {
+                  fileMap[f.name] = URL.createObjectURL(new Blob([f.buffer], { type: f.type || 'application/octet-stream' }));
+                });
+                state.setCustomModelUrl({
+                  mainUrl: fileMap[gltfFile.name],
+                  fileMap: fileMap
+                });
+                console.log("[P2P] Model gościa załadowany pomyślnie.");
+              }
+            } catch (err) {
+              console.error("[P2P] Błąd podczas renderowania otrzymanego modelu:", err);
             }
           }
         });
