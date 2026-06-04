@@ -1,8 +1,10 @@
+import { Activity, ChartLine, Box } from "lucide-react";
+
 function MobileNav({ activeTab, setActiveTab }) {
   const tabs = [
-    { id: 'telemetry', label: 'Telemetria', icon: '📊' },
-    { id: 'chart', label: 'Wykres', icon: '📈' },
-    { id: '3d', label: '3D / Eksport', icon: '🧊' },
+    { id: 'telemetry', label: 'Telemetria', Icon: Activity },
+    { id: 'chart', label: 'Wykres', Icon: ChartLine },
+    { id: '3d', label: '3D / Eksport', Icon: Box },
   ];
 
   return (
@@ -17,7 +19,7 @@ function MobileNav({ activeTab, setActiveTab }) {
               : 'text-brand-secondary hover:text-brand-text border-t-2 border-transparent'
           }`}
         >
-          <span className="text-base leading-none">{tab.icon}</span>
+          <tab.Icon className="w-4 h-4" />
           <span>{tab.label}</span>
         </button>
       ))}

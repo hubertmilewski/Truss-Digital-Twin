@@ -182,20 +182,22 @@ function Header() {
           </div>
 
           {/* Hamburger button */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="w-9 h-9 flex flex-col items-center justify-center gap-1.5 rounded-lg border border-surface-border bg-white hover:bg-brand-bg transition-colors active:scale-95"
-          >
-            <span
-              className={`block w-4 h-0.5 bg-brand-text rounded-full transition-transform duration-200 ${menuOpen ? "rotate-45 translate-y-1" : ""}`}
-            ></span>
-            <span
-              className={`block w-4 h-0.5 bg-brand-text rounded-full transition-opacity duration-200 ${menuOpen ? "opacity-0" : ""}`}
-            ></span>
-            <span
-              className={`block w-4 h-0.5 bg-brand-text rounded-full transition-transform duration-200 ${menuOpen ? "-rotate-45 -translate-y-1" : ""}`}
-            ></span>
-          </button>
+          {!isGuestMode && (
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="w-9 h-9 flex flex-col items-center justify-center gap-1.5 rounded-lg border border-surface-border bg-white hover:bg-brand-bg transition-colors active:scale-95"
+            >
+              <span
+                className={`block w-4 h-0.5 bg-brand-text rounded-full transition-transform duration-200 ${menuOpen ? "rotate-45 translate-y-1" : ""}`}
+              ></span>
+              <span
+                className={`block w-4 h-0.5 bg-brand-text rounded-full transition-opacity duration-200 ${menuOpen ? "opacity-0" : ""}`}
+              ></span>
+              <span
+                className={`block w-4 h-0.5 bg-brand-text rounded-full transition-transform duration-200 ${menuOpen ? "-rotate-45 -translate-y-1" : ""}`}
+              ></span>
+            </button>
+          )}
         </div>
       </div>
 

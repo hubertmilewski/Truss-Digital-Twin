@@ -59,19 +59,19 @@ function MainChart() {
   };
 
   return (
-    <section className="bg-brand-bg relative overflow-hidden flex flex-col p-3 sm:p-6 min-h-0 lg:h-auto h-full">
+    <section className="bg-surface relative overflow-hidden flex flex-col p-3 sm:p-6 min-h-0 lg:h-auto h-full">
       {/* Nagłówek sekcji */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-3">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-3">
         <h3 className="text-xs uppercase font-bold text-brand-secondary tracking-widest">
           Dynamika Obciążenia
         </h3>
 
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+        <div className="flex items-center gap-1.5 sm:gap-3 w-full sm:w-auto">
           {/* Przełącznik jednostek */}
-          <div className="flex items-center h-9 sm:h-11 bg-surface border border-surface-border rounded-lg overflow-hidden shadow-sm">
+          <div className="flex items-center h-8 sm:h-11 bg-brand-bg border border-surface-border rounded-lg overflow-hidden shadow-sm">
             <button
               onClick={() => setDisplayUnit("N")}
-              className={`px-3 sm:px-4 h-full text-[10px] sm:text-xs font-bold tracking-wider transition-all duration-200 ${
+              className={`px-2 sm:px-4 h-full text-[9px] sm:text-xs font-bold tracking-wider transition-all duration-200 ${
                 isN
                   ? "bg-brand-primary text-white shadow-inner"
                   : "text-brand-secondary hover:text-brand-text hover:bg-brand-bg"
@@ -79,10 +79,10 @@ function MainChart() {
             >
               Niutony
             </button>
-            <div className="w-px h-5 bg-surface-border"></div>
+            <div className="w-px h-4 sm:h-5 bg-surface-border"></div>
             <button
               onClick={() => setDisplayUnit("g")}
-              className={`px-3 sm:px-4 h-full text-[10px] sm:text-xs font-bold tracking-wider transition-all duration-200 ${
+              className={`px-2 sm:px-4 h-full text-[9px] sm:text-xs font-bold tracking-wider transition-all duration-200 ${
                 !isN
                   ? "bg-brand-primary text-white shadow-inner"
                   : "text-brand-secondary hover:text-brand-text hover:bg-brand-bg"
@@ -93,19 +93,19 @@ function MainChart() {
           </div>
 
           {/* Wyświetlacz czasu sesji */}
-          <div className="flex items-center gap-2 px-3 sm:px-4 h-9 sm:h-11 bg-surface border border-surface-border rounded-lg shadow-sm">
-            <span className="text-[9px] sm:text-[10px] font-bold text-brand-secondary uppercase tracking-widest">Czas</span>
-            <span className="text-xs sm:text-sm font-bold font-mono text-brand-text tabular-nums leading-none">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 h-8 sm:h-11 bg-brand-bg border border-surface-border rounded-lg shadow-sm">
+            <span className="text-[8px] sm:text-[10px] font-bold text-brand-secondary uppercase tracking-widest">Czas</span>
+            <span className="text-[10px] sm:text-sm font-bold font-mono text-brand-text tabular-nums leading-none">
               {formatSessionTime(currentMaxTime)}
             </span>
-            <span className="text-[9px] sm:text-[10px] font-bold text-brand-secondary">s</span>
+            <span className="text-[8px] sm:text-[10px] font-bold text-brand-secondary">s</span>
           </div>
 
           {/* Przycisk START/STOP POMIAR (Tylko Host) */}
           {isConnected && !isGuestMode && (
             <button
               onClick={toggleRecording}
-              className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-6 h-9 sm:h-11 rounded-lg text-[10px] sm:text-xs font-bold tracking-wider transition-all shadow-sm active:scale-95 ${
+              className={`flex items-center gap-1.5 sm:gap-3 px-3 sm:px-6 h-8 sm:h-11 rounded-lg text-[9px] sm:text-xs font-bold tracking-wider transition-all shadow-sm active:scale-95 ${
                 isRecording
                   ? "bg-brand-accent text-white hover:bg-red-700"
                   : "bg-emerald-600 text-white hover:bg-emerald-700"
@@ -117,13 +117,13 @@ function MainChart() {
 
           {/* Status nagrywania (Tylko Widz) */}
           {isGuestMode && (
-            <div className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-6 h-9 sm:h-11 rounded-lg text-[10px] sm:text-xs font-bold tracking-wider shadow-sm ${
+            <div className={`flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-6 h-8 sm:h-11 rounded-lg text-[9px] sm:text-xs font-bold tracking-wider shadow-sm ${
               isRecording
                 ? "bg-brand-accent/20 text-brand-accent border border-brand-accent/30"
                 : "bg-slate-100 text-slate-400 border border-slate-200"
             }`}>
               {isRecording ? (
-                <><span className="w-2 h-2 rounded-full bg-brand-accent animate-pulse"></span> TRWA POMIAR</>
+                <><span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-brand-accent animate-pulse"></span> TRWA POMIAR</>
               ) : (
                 "CZEKAM NA HOSTA"
               )}
@@ -137,7 +137,7 @@ function MainChart() {
         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
           <LineChart
             data={history.length > 0 ? history : [{ time: 0, _placeholder: 0 }]}
-            margin={{ top: 16, right: 16, left: 32, bottom: 12 }}
+            margin={{ top: 16, right: 16, left: 8, bottom: 12 }}
           >
             <CartesianGrid
               strokeDasharray="4 4"
@@ -172,7 +172,7 @@ function MainChart() {
               tickLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
               tick={{ fontSize: 10, fill: "#64748B", fontWeight: 600, fontFamily: "Inter" }}
               tickMargin={6}
-              width={60}
+              width={40}
               label={{
                 value: `Obciążenie [${unitLabel}]`,
                 angle: -90,
