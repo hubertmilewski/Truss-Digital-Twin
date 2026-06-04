@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import IntroAnimation from './components/layout/IntroAnimation';
 import Header from './components/layout/Header';
 import SidebarLeft from './components/layout/SidebarLeft';
@@ -7,9 +7,29 @@ import SidebarRight from './components/layout/SidebarRight';
 import Footer from './components/layout/Footer';
 import MobileNav from './components/layout/MobileNav';
 import TutorialWizard from './components/tutorial/TutorialWizard';
+import { getModelFiles } from './utils/modelStorage';
+import { useSensorStore } from './store/useSensorStore';
 
 function App() {
   const [activeTab, setActiveTab] = useState('chart');
+
+  useEffect(() => {
+    getModelFiles().then(files => {
+      if (files && files.length > 0) {
+        const gltfFile = files.find(f => f.name.toLowerCase().endsWith('.gltf') || f.name.toLowerCase().endsWith('.glb'));
+        if (gltfFile) {
+          const fileMap = {};
+          files.forEach(f => {
+            fileMap[f.name] = URL.createObjectURL(f);
+          });
+          useSensorStore.getState().setCustomModelUrl({
+            mainUrl: fileMap[gltfFile.name],
+            fileMap: fileMap
+          });
+        }
+      }
+    });
+  }, []);
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-brand-bg text-brand-text">

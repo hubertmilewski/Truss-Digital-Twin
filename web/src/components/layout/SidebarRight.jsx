@@ -1,9 +1,14 @@
 import { useRef, useState } from "react";
-import { Expand, X } from "lucide-react";
+import { Expand, X, Trash2 } from "lucide-react";
 import { useSensorStore } from "../../store/useSensorStore";
 import Visualization from "../visualization/Visualization";
+import * as XLSX from "xlsx";
+import { saveModelFiles, clearModelFiles } from "../../utils/modelStorage";
+
 function SidebarRight() {
-  const { history, sensors, setCustomModelUrl, customModelUrl } = useSensorStore();
+  const setCustomModelUrl = useSensorStore(state => state.setCustomModelUrl);
+  const customModelUrl = useSensorStore(state => state.customModelUrl);
+  
   const fileInputRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -17,12 +22,13 @@ function SidebarRight() {
   };
 
   const exportToExcel = () => {
-    if (history.length === 0) {
+    const { history, sensors } = useSensorStore.getState();
+    
+    if (!history || history.length === 0) {
       alert("Brak danych do eksportu!");
       return;
     }
 
-    // Przygotowanie danych do formatu tabelarycznego
     const dataToExport = history.map(row => {
       const exportRow = { "Czas [s]": row.time };
       sensors.forEach(sensor => {
@@ -32,29 +38,52 @@ function SidebarRight() {
       return exportRow;
     });
 
-    // Tworzenie arkusza
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Dane Telemetryczne");
 
-    // Generowanie nazwy pliku z datą
     const date = new Date().toISOString().split('T')[0];
     const fileName = `Kratownica_Eksport_${date}.xlsx`;
 
-    // Pobieranie pliku
     XLSX.writeFile(workbook, fileName);
   };
 
-  const handleImportModel = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      // Zwolnij poprzedni adres URL, jeśli istnieje, aby zapobiec wyciekom pamięci
-      if (customModelUrl) {
+  const handleImportModel = async (event) => {
+    const files = Array.from(event.target.files);
+    if (files.length > 0) {
+      const gltfFile = files.find(f => f.name.toLowerCase().endsWith('.gltf') || f.name.toLowerCase().endsWith('.glb'));
+      if (!gltfFile) {
+        alert("Nie znaleziono pliku .gltf lub .glb w wybranym folderze/plikach.");
+        return;
+      }
+
+      if (customModelUrl && typeof customModelUrl === 'object') {
+        Object.values(customModelUrl.fileMap).forEach(url => URL.revokeObjectURL(url));
+      } else if (customModelUrl && typeof customModelUrl === 'string') {
         URL.revokeObjectURL(customModelUrl);
       }
-      const url = URL.createObjectURL(file);
-      setCustomModelUrl(url);
+
+      const fileMap = {};
+      files.forEach(f => {
+        fileMap[f.name] = URL.createObjectURL(f);
+      });
+
+      setCustomModelUrl({
+        mainUrl: fileMap[gltfFile.name],
+        fileMap: fileMap
+      });
+
+      // Zapisujemy pliki do IndexedDB, żeby pamiętać je po przeładowaniu strony
+      await saveModelFiles(files);
     }
+  };
+
+  const handleClearModel = async () => {
+    if (customModelUrl && typeof customModelUrl === 'object') {
+      Object.values(customModelUrl.fileMap).forEach(url => URL.revokeObjectURL(url));
+    }
+    setCustomModelUrl(null);
+    await clearModelFiles();
   };
 
   return (
@@ -90,17 +119,30 @@ function SidebarRight() {
         
         <input 
           type="file" 
-          accept=".gltf,.glb" 
+          webkitdirectory="true"
+          multiple
           ref={fileInputRef} 
           className="hidden" 
           onChange={handleImportModel} 
         />
-        <button 
-          onClick={() => fileInputRef.current?.click()}
-          className="w-full py-3 px-4 bg-white text-brand-secondary border border-surface-border text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm uppercase tracking-widest active:scale-95"
-        >
-          IMPORTUJ MODEL 3D
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="flex-1 py-3 px-4 bg-white text-brand-secondary border border-surface-border text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm uppercase tracking-widest active:scale-95"
+          >
+            {customModelUrl ? 'ZMIEŃ MODEL' : 'IMPORTUJ MODEL (FOLDER)'}
+          </button>
+          
+          {customModelUrl && (
+            <button 
+              onClick={handleClearModel}
+              title="Usuń model z pamięci"
+              className="w-12 flex items-center justify-center bg-white text-red-500 border border-surface-border rounded-lg hover:bg-red-50 transition-colors shadow-sm active:scale-95"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </section>
 
       {(isFullscreen || isClosing) && (

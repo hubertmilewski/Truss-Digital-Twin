@@ -17,6 +17,7 @@ export const useSensorStore = create((set, get) => ({
   displayUnit: 'N',
   extremeValues: {}, // format: { 'sensor_A': { max: { valueG, valueN, time }, min: { valueG, valueN, time } } }
   customModelUrl: null,
+  meshSensorMap: JSON.parse(localStorage.getItem('pb_mesh_mapping') || '{}'),
   
   // Konfiguracja sprzętu i tutorialu
   maxLoadN: 10, // Domyślnie 10 N
@@ -37,6 +38,25 @@ export const useSensorStore = create((set, get) => ({
   setSensors: (sensors) => set({ sensors }),
   setConnectionError: (error) => set({ connectionError: error }),
   setCustomModelUrl: (url) => set({ customModelUrl: url }),
+  
+  setMeshSensorMapping: (meshId, sensorId) => set((state) => {
+    const newMap = { ...state.meshSensorMap };
+    // Jeśli ten czujnik był przypisany do innej belki, usuwamy to powiązanie (1 do 1)
+    Object.keys(newMap).forEach(key => {
+      if (newMap[key] === sensorId) delete newMap[key];
+    });
+    
+    if (sensorId) {
+      newMap[meshId] = sensorId;
+    } else {
+      delete newMap[meshId];
+    }
+    
+    // Zapisujemy od razu w localStorage
+    localStorage.setItem('pb_mesh_mapping', JSON.stringify(newMap));
+    
+    return { meshSensorMap: newMap };
+  }),
   
   // Aktualizacja danych + opcjonalne dodawanie do historii
   setSensorData: (newData) => set((state) => {
