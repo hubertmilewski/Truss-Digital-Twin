@@ -105,7 +105,7 @@ function SidebarRight() {
 
       {(isFullscreen || isClosing) && (
         <div 
-          className={`fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-slate-900/40 backdrop-blur-sm ${
+          className={`fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-8 bg-slate-900/40 backdrop-blur-sm ${
             isClosing ? "animate-fade-out" : "animate-fade-in"
           }`}
           onClick={closeFullscreen}
