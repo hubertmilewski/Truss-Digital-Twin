@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSensorStore } from "../../store/useSensorStore";
 import { connectSerial, disconnectSerial } from "../../utils/serialManager";
 import logo from "../../assets/pb-logo.png";
+import { AlertCircle, X, TriangleAlert } from "lucide-react";
 
 function Header() {
   const { isConnected, isSignalLost, connectionError, setConnectionError } = useSensorStore();
@@ -24,16 +25,16 @@ function Header() {
               className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-red-500/10 border border-red-500/20 rounded-lg text-red-600 cursor-pointer hover:bg-red-500/20 transition-all shadow-sm group"
               title="Kliknij, aby zamknąć"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 sm:w-4 sm:h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <AlertCircle className="w-4 h-4 sm:w-4 sm:h-4 shrink-0" />
               <span className="text-[10px] font-bold tracking-wider whitespace-nowrap">{connectionError.toUpperCase()}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 transition-opacity ml-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              <X className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 transition-opacity ml-0.5 shrink-0" />
             </div>
           )}
 
           {/* Powiadomienie o utracie sygnału */}
           {isSignalLost && isConnected && (
             <div className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-600 shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 sm:w-4 sm:h-4 animate-pulse shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              <TriangleAlert className="w-4 h-4 sm:w-4 sm:h-4 animate-pulse shrink-0" />
               <span className="text-[10px] font-bold tracking-wider whitespace-nowrap">UTRATA SYGNAŁU Z PICO</span>
             </div>
           )}
@@ -97,15 +98,15 @@ function Header() {
               onClick={() => { setConnectionError(null); }}
               className="flex items-center gap-2.5 px-3 py-2.5 bg-red-500/10 border border-red-500/20 rounded-lg text-red-600 cursor-pointer hover:bg-red-500/20 transition-all group"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <AlertCircle className="w-4 h-4 shrink-0" />
               <span className="text-[10px] font-bold tracking-wider flex-1">{connectionError.toUpperCase()}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 opacity-40 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              <X className="w-3.5 h-3.5 opacity-40 shrink-0" />
             </div>
           )}
 
           {isSignalLost && isConnected && (
             <div className="flex items-center gap-2.5 px-3 py-2.5 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-600">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 animate-pulse shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              <TriangleAlert className="w-4 h-4 animate-pulse shrink-0" />
               <span className="text-[10px] font-bold tracking-wider">UTRATA SYGNAŁU Z PICO</span>
             </div>
           )}

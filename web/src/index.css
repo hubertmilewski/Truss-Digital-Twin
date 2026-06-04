@@ -68,5 +68,46 @@
 }
 
 .animate-in {
-  animation: slideDown 200ms ease-out;
+  animation: slideDown 200ms ease-out forwards;
 }
+
+@keyframes slideUpFadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+}
+
+.animate-out {
+  animation: slideUpFadeOut 200ms ease-in forwards;
+}
+
+@keyframes simpleFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes simpleFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.animate-fade-in { animation: simpleFadeIn 200ms ease-out forwards; }
+.animate-fade-out { animation: simpleFadeOut 200ms ease-in forwards; }
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes zoomOut {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}
+
+.animate-zoom-in { animation: zoomIn 200ms ease-out forwards; }
+.animate-zoom-out { animation: zoomOut 200ms ease-in forwards; }
