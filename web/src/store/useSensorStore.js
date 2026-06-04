@@ -14,9 +14,9 @@ export const useSensorStore = create((set, get) => ({
   connectionStartTime: null,
   isRecording: false,
   startTime: null,
-  displayUnit: 'N', // Domyślnie Niutony
+  displayUnit: 'N',
   extremeValues: {
-    max: null, // { valueG, valueN, sensor, time }
+    max: null,
     min: null,
   },
   
@@ -35,8 +35,27 @@ export const useSensorStore = create((set, get) => ({
     const normalizedData = { ...newData };
     const updatedSensorData = { ...state.sensorData, ...normalizedData };
     
+    // dynamiczne wykrywanie czujników w przypadku utraty paczki konfiguracyjnej
+    const newSensors = [...state.sensors];
+    let sensorsChanged = false;
+
+    Object.keys(normalizedData).forEach(key => {
+      if (key.endsWith('_g')) {
+        const fullSensorId = key.replace('_g', ''); // np. 'sensor_A'
+        const shortId = fullSensorId.replace('sensor_', ''); // np. 'A'
+        
+        if (!newSensors.find(s => s.id === fullSensorId)) {
+          newSensors.push({ id: fullSensorId, label: `Belka (${shortId})` });
+          sensorsChanged = true;
+        }
+      }
+    });
+    
     if (!state.isRecording) {
-      return { sensorData: updatedSensorData };
+      return { 
+        sensorData: updatedSensorData,
+        ...(sensorsChanged ? { sensors: newSensors } : {})
+      };
     }
 
     const currentTime = new Date().getTime();
@@ -71,7 +90,8 @@ export const useSensorStore = create((set, get) => ({
     return {
       sensorData: updatedSensorData,
       extremeValues: { max: newMax, min: newMin },
-      history: [...state.history, newEntry].slice(-50000)
+      history: [...state.history, newEntry].slice(-50000),
+      ...(sensorsChanged ? { sensors: newSensors } : {})
     };
   }),
 
