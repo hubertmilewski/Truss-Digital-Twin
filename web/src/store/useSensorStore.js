@@ -51,9 +51,24 @@ export const useSensorStore = create((set, get) => ({
   syncGuestConfig: (config) => set((state) => ({
     meshSensorMap: config.meshSensorMap || state.meshSensorMap,
     maxLoadN: config.maxLoadN || state.maxLoadN,
-    displayUnit: config.displayUnit || state.displayUnit
+    displayUnit: config.displayUnit || state.displayUnit,
+    history: config.history || state.history,
+    sensorData: config.sensorData || state.sensorData,
+    extremeValues: config.extremeValues || state.extremeValues,
+    startTime: config.isRecording ? (new Date().getTime() - (config.history.length > 0 ? parseFloat(config.history[config.history.length-1].time)*1000 : 0)) : state.startTime,
+    isRecording: config.isRecording || false
   })),
 
+  startRecording: () => set({
+    isRecording: true,
+    startTime: new Date().getTime(),
+    history: [],
+    extremeValues: {}
+  }),
+
+  stopRecording: () => set({
+    isRecording: false
+  }),
   setMeshSensorMapping: (meshId, sensorId) => set((state) => {
     const newMap = { ...state.meshSensorMap };
     // Jeśli ten czujnik był przypisany do innej belki, usuwamy to powiązanie (1 do 1)

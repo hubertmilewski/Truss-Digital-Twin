@@ -41,7 +41,10 @@ export const PeerManager = {
               meshSensorMap: state.meshSensorMap,
               maxLoadN: state.maxLoadN,
               displayUnit: state.displayUnit,
-              isRecording: state.isRecording
+              isRecording: state.isRecording,
+              history: state.history,
+              sensorData: state.sensorData,
+              extremeValues: state.extremeValues
             }
           });
 
