@@ -16,7 +16,6 @@ const getMeshPath = (mesh) => {
   return path;
 };
 
-
 function LiveLabel({ sensorId, position, displayUnit }) {
   const divRef = useRef(null);
 
@@ -29,9 +28,7 @@ function LiveLabel({ sensorId, position, displayUnit }) {
     const valToDisplay = displayUnit === 'N' ? valueN.toFixed(1) : valueG.toFixed(0);
     const isTension = valueN > 0;
     
-    
     divRef.current.innerText = `${valToDisplay} ${displayUnit}`;
-    
     
     const baseClasses = "px-2 py-1 rounded-md text-[10px] sm:text-xs font-bold whitespace-nowrap shadow-sm border backdrop-blur-md pointer-events-none transition-colors";
     if (Math.abs(valueN) > 0.5) {
@@ -82,7 +79,6 @@ function CustomModel({ modelData, isFullscreen }) {
     });
   });
 
-  
   const scene = useMemo(() => {
     const cloned = gltf.scene.clone();
     cloned.updateMatrixWorld(true);
@@ -93,7 +89,6 @@ function CustomModel({ modelData, isFullscreen }) {
         child.userData.originalMaterial = child.material.clone();
         child.material = child.material.clone();
         child.userData.path = getMeshPath(child);
-        
         
         child.geometry.computeBoundingBox();
         const center = new THREE.Vector3();
@@ -170,7 +165,6 @@ function CustomModel({ modelData, isFullscreen }) {
     <group onPointerDown={handlePointerDown} onPointerMissed={handlePointerMissed}>
       <primitive object={scene} />
       
-      
       {selectedMesh && isFullscreen && (
         <Html position={selectedMesh.position} center zIndexRange={[100, 0]}>
           <div className="bg-white/95 backdrop-blur-md p-4 rounded-xl shadow-xl border border-slate-200 min-w-[220px] flex flex-col gap-3 transform -translate-y-1/2 cursor-default" onPointerDown={e => e.stopPropagation()}>
@@ -208,7 +202,6 @@ function CustomModel({ modelData, isFullscreen }) {
         </Html>
       )}
 
-      
       {mappedElements.map((el) => (
         <LiveLabel key={el.path} sensorId={el.sensorId} position={el.position} displayUnit={displayUnit} />
       ))}

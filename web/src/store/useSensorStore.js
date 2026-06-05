@@ -1,13 +1,9 @@
 import { create } from 'zustand'
 
 export const useSensorStore = create((set, get) => ({
-  
   sensorData: {},
   sensors: [], 
-  
-  
   history: [],
-  
   isConnected: false,
   isSignalLost: false,
   connectionError: null,
@@ -18,8 +14,6 @@ export const useSensorStore = create((set, get) => ({
   extremeValues: {}, 
   customModelUrl: null,
   meshSensorMap: JSON.parse(localStorage.getItem('pb_mesh_mapping') || '{}'),
-  
-  
   maxLoadN: 10, 
   tutorialCompleted: localStorage.getItem('pb_tutorial') === 'true',
   
@@ -38,7 +32,6 @@ export const useSensorStore = create((set, get) => ({
 
   setConnectionError: (error) => set({ connectionError: error }),
   setCustomModelUrl: (url) => set({ customModelUrl: url }),
-  
   
   sessionId: null,
   viewerCount: 0,
@@ -82,12 +75,10 @@ export const useSensorStore = create((set, get) => ({
       delete newMap[meshId];
     }
     
-    
     localStorage.setItem('pb_mesh_mapping', JSON.stringify(newMap));
     
     return { meshSensorMap: newMap };
   }),
-  
   
   setSensorData: (newData) => set((state) => {
     
@@ -98,14 +89,13 @@ export const useSensorStore = create((set, get) => ({
     const normalizedData = { ...newData };
     const updatedSensorData = { ...state.sensorData, ...normalizedData };
     
-    
     const newSensors = [...state.sensors];
     let sensorsChanged = false;
 
     Object.keys(normalizedData).forEach(key => {
       if (key.endsWith('_g')) {
-        const fullSensorId = key.replace('_g', ''); // np. 'sensor_A'
-        const shortId = fullSensorId.replace('sensor_', ''); // np. 'A'
+        const fullSensorId = key.replace('_g', '');
+        const shortId = fullSensorId.replace('sensor_', ''); 
         
         if (!newSensors.find(s => s.id === fullSensorId)) {
           newSensors.push({ id: fullSensorId, label: `Belka (${shortId})` });
@@ -123,14 +113,12 @@ export const useSensorStore = create((set, get) => ({
 
     const currentTime = new Date().getTime();
     const relativeTime = parseFloat(((currentTime - state.startTime) / 1000).toFixed(1));
-
     
     let newExtremeValues = { ...state.extremeValues };
 
-    
     Object.keys(normalizedData).forEach(key => {
       if (key.endsWith('_g')) {
-        const fullSensorId = key.replace('_g', ''); // np. 'sensor_A'
+        const fullSensorId = key.replace('_g', '');
         const valG = normalizedData[key];
         const valN = normalizedData[key.replace('_g', '_N')] || 0;
 

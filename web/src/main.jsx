@@ -3,8 +3,6 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
-
-
 const originalWarn = console.warn;
 console.warn = (...args) => {
   if (typeof args[0] === 'string' && (

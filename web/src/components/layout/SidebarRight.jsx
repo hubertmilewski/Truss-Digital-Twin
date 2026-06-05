@@ -9,7 +9,7 @@ function SidebarRight() {
   const setCustomModelUrl = useSensorStore(state => state.setCustomModelUrl);
   const customModelUrl = useSensorStore(state => state.customModelUrl);
   const isGuestMode = useSensorStore(state => state.isGuestMode);
-  
+
   const fileInputRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);

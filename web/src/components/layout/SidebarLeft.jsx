@@ -57,7 +57,7 @@ function SidebarLeft() {
                     </span>
 
                     <div className="flex gap-3 sm:gap-4 items-center flex-1 justify-end">
-                      {/* MIN */}
+
                       <div className="flex flex-col items-end w-[85px] sm:w-[95px]">
                         {exts?.min ? (
                           <div className="text-right leading-none">
@@ -90,7 +90,6 @@ function SidebarLeft() {
                         )}
                       </div>
 
-                      {/* MAX */}
                       <div className="flex flex-col items-end w-[85px] sm:w-[95px]">
                         {exts?.max ? (
                           <div className="text-right leading-none">

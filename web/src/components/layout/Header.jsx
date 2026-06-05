@@ -58,15 +58,12 @@ function Header() {
 
   return (
     <header className="bg-surface border-b border-surface-border shadow-sm z-10">
-      {/* Main header row */}
       <div className="flex justify-between items-center px-4 sm:px-8 py-2">
         <div className="flex items-center gap-4">
           <img src={logo} alt="PB Logo" className="h-12 sm:h-20" />
         </div>
 
-        {/* Desktop controls */}
         <div className="hidden md:flex items-center gap-6">
-          {/* Powiadomienie o błędach */}
           {connectionError && !isGuestMode && (
             <div
               onClick={() => setConnectionError(null)}
@@ -81,7 +78,6 @@ function Header() {
             </div>
           )}
 
-          {/* Powiadomienie o utracie sygnału */}
           {isSignalLost && (isConnected || isGuestMode) && (
             <div className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-600 shadow-sm">
               <TriangleAlert className="w-4 h-4 sm:w-4 sm:h-4 animate-pulse shrink-0" />
@@ -91,7 +87,6 @@ function Header() {
             </div>
           )}
 
-          {/* Status połączenia */}
           <div
             className={`flex items-center gap-2 px-4 py-2 rounded-md text-[11px] font-bold tracking-widest shadow-sm border ${isGuestMode ? "bg-purple-500/10 text-purple-600 border-purple-500/20" : isConnected ? (isSignalLost ? "bg-amber-500/10 text-amber-600 border-amber-500/20" : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20") : "bg-red-500/5 text-red-500 border-red-500/20"}`}
           >
@@ -104,7 +99,6 @@ function Header() {
                 : "NIE PODŁĄCZONO"}
           </div>
 
-          {/* Przyciski operacyjne */}
           <div className="flex items-center gap-2">
             {!isGuestMode && (
               <button
@@ -154,7 +148,6 @@ function Header() {
           </div>
         </div>
 
-        {/* Mobile: compact status + hamburger */}
         <div className="flex md:hidden items-center gap-2 sm:gap-3">
           {!isGuestMode && (
             <button
@@ -165,7 +158,6 @@ function Header() {
             </button>
           )}
 
-          {/* Compact status indicator */}
           <div
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-bold tracking-wider shadow-sm border ${isGuestMode ? "bg-purple-500/10 text-purple-600 border-purple-500/20" : isConnected ? (isSignalLost ? "bg-amber-500/10 text-amber-600 border-amber-500/20" : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20") : "bg-red-500/5 text-red-500 border-red-500/20"}`}
           >
@@ -181,7 +173,6 @@ function Header() {
                 : "OFF"}
           </div>
 
-          {/* Hamburger button */}
           {!isGuestMode && (
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -201,7 +192,6 @@ function Header() {
         </div>
       </div>
 
-      {/* Mobile dropdown menu */}
       {menuOpen && (
         <div className="md:hidden border-t border-surface-border bg-surface px-4 py-3 flex flex-col gap-3 animate-in slide-in-from-top">
           {!isGuestMode && (
@@ -240,7 +230,6 @@ function Header() {
         </div>
       )}
 
-      {/* Modal Ustawień */}
       {showSettings &&
         createPortal(
           <div
@@ -302,7 +291,6 @@ function Header() {
           document.body,
         )}
 
-      {/* Modal Udostępniania (P2P) */}
       {showShareModal &&
         createPortal(
           <div
@@ -365,8 +353,8 @@ function Header() {
                         setTimeout(() => setLinkCopied(false), 2000);
                       }}
                       className={`flex-1 py-2.5 border rounded-lg text-xs font-bold transition-colors shadow-sm active:scale-95 flex items-center justify-center gap-2 ${
-                        linkCopied 
-                          ? "bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100" 
+                        linkCopied
+                          ? "bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100"
                           : "bg-white border-surface-border text-brand-secondary hover:bg-slate-50"
                       }`}
                     >

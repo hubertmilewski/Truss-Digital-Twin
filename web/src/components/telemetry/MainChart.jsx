@@ -25,7 +25,6 @@ function MainChart() {
   ];
   const yDomain = isN ? [0, 10] : [0, 1000];
   const yTicks = isN ? [0, 2, 4, 6, 8, 10] : [0, 200, 400, 600, 800, 1000];
-
   
   const currentMaxTime =
     history.length > 0 ? history[history.length - 1].time : 0;
@@ -91,7 +90,6 @@ function MainChart() {
               Gramy
             </button>
           </div>
-
           
           <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 h-8 sm:h-11 bg-brand-bg border border-surface-border rounded-lg shadow-sm">
             <span className="text-[8px] sm:text-[10px] font-bold text-brand-secondary uppercase tracking-widest">Czas</span>
@@ -100,7 +98,6 @@ function MainChart() {
             </span>
             <span className="text-[8px] sm:text-[10px] font-bold text-brand-secondary">s</span>
           </div>
-
           
           {isConnected && !isGuestMode && (
             <button
@@ -115,7 +112,6 @@ function MainChart() {
             </button>
           )}
 
-          
           {isGuestMode && (
             <div className={`flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-6 h-8 sm:h-11 rounded-lg text-[9px] sm:text-xs font-bold tracking-wider shadow-sm ${
               isRecording
@@ -131,7 +127,6 @@ function MainChart() {
           )}
         </div>
       </div>
-
       
       <div className="flex-1 bg-surface border border-surface-border rounded-xl shadow-sm overflow-hidden min-h-[250px] sm:min-h-0">
         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>

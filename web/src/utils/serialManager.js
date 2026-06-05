@@ -24,7 +24,6 @@ export const connectSerial = async () => {
     port = await navigator.serial.requestPort();
     await port.open({ baudRate: 115200 }); 
     
-    
     try {
       await port.setSignals({ dataTerminalReady: false, requestToSend: false });
       await new Promise(r => setTimeout(r, 100));
@@ -61,7 +60,6 @@ export const disconnectSerial = async () => {
   }
 };
 
-
 const cleanupConnection = () => {
   useSensorStore.getState().setIsConnected(false);
   useSensorStore.getState().setSignalLost(false);
@@ -82,7 +80,6 @@ const readLoop = async () => {
       if (done) break;
       
       if (value) {
-        // Resetujemy watchdog przy każdym otrzymanym fragmencie danych
         useSensorStore.getState().setSignalLost(false);
         startWatchdog();
 
