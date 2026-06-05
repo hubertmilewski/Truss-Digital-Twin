@@ -74,7 +74,7 @@ function SidebarRight() {
         fileMap: fileMap
       });
 
-      // Zapisujemy pliki do IndexedDB, żeby pamiętać je po przeładowaniu strony
+      
       await saveModelFiles(files);
     }
   };

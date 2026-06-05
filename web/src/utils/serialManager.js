@@ -8,7 +8,7 @@ const startWatchdog = () => {
   stopWatchdog();
   watchdogTimer = setTimeout(() => {
     useSensorStore.getState().setSignalLost(true);
-  }, 3000); // 3 sekundy bez danych = utrata sygnału
+  }, 3000); 
 };
 
 const stopWatchdog = () => {
@@ -24,7 +24,7 @@ export const connectSerial = async () => {
     port = await navigator.serial.requestPort();
     await port.open({ baudRate: 115200 }); 
     
-    // Wymuszenie sygnałów DTR/RTS, aby Raspberry Pi Pico/MicroPython wiedział, że terminal jest gotowy
+    
     try {
       await port.setSignals({ dataTerminalReady: false, requestToSend: false });
       await new Promise(r => setTimeout(r, 100));
@@ -49,10 +49,10 @@ export const connectSerial = async () => {
 export const disconnectSerial = async () => {
   try {
     if (reader) {
-      // Anulowanie readera przerywa pętlę readLoop (zwraca done: true)
+      
       await reader.cancel();
     } else {
-      // Awaryjne czyszczenie jeśli reader nie istnieje
+      
       cleanupConnection();
     }
   } catch (error) {
@@ -61,7 +61,7 @@ export const disconnectSerial = async () => {
   }
 };
 
-// Funkcja pomocnicza do czyszczenia stanu
+
 const cleanupConnection = () => {
   useSensorStore.getState().setIsConnected(false);
   useSensorStore.getState().setSignalLost(false);
@@ -126,7 +126,7 @@ const readLoop = async () => {
       try {
         await port.close();
       } catch (e) {
-        // Port może być już niedostępny fizycznie, ignorujemy błąd
+        
       }
       port = null;
     }

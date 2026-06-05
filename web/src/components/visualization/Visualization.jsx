@@ -16,7 +16,7 @@ const getMeshPath = (mesh) => {
   return path;
 };
 
-// Zoptymalizowany komponent etykiety, aktualizujący DOM bezpośrednio, bez renderów Reacta
+
 function LiveLabel({ sensorId, position, displayUnit }) {
   const divRef = useRef(null);
 
@@ -29,10 +29,10 @@ function LiveLabel({ sensorId, position, displayUnit }) {
     const valToDisplay = displayUnit === 'N' ? valueN.toFixed(1) : valueG.toFixed(0);
     const isTension = valueN > 0;
     
-    // Zmiana tekstu
+    
     divRef.current.innerText = `${valToDisplay} ${displayUnit}`;
     
-    // Zmiana klas CSS na bieżąco, aby uniknąć re-renderów
+    
     const baseClasses = "px-2 py-1 rounded-md text-[10px] sm:text-xs font-bold whitespace-nowrap shadow-sm border backdrop-blur-md pointer-events-none transition-colors";
     if (Math.abs(valueN) > 0.5) {
       if (isTension) {
@@ -52,9 +52,9 @@ function LiveLabel({ sensorId, position, displayUnit }) {
   );
 }
 
-// Component to load and display a custom GLTF model with multiple files
+
 function CustomModel({ modelData, isFullscreen }) {
-  // UWAGA: Nie subskrybujemy się pod `sensorData`, aby CustomModel nie przerenderowywał się 100 razy na sekundę!
+  
   const sensors = useSensorStore(state => state.sensors);
   const meshSensorMap = useSensorStore(state => state.meshSensorMap);
   const setMeshSensorMapping = useSensorStore(state => state.setMeshSensorMapping);
@@ -82,7 +82,7 @@ function CustomModel({ modelData, isFullscreen }) {
     });
   });
 
-  // Clone scene and setup materials/paths
+  
   const scene = useMemo(() => {
     const cloned = gltf.scene.clone();
     cloned.updateMatrixWorld(true);
@@ -94,7 +94,7 @@ function CustomModel({ modelData, isFullscreen }) {
         child.material = child.material.clone();
         child.userData.path = getMeshPath(child);
         
-        // Pre-calculate center for labels
+        
         child.geometry.computeBoundingBox();
         const center = new THREE.Vector3();
         child.geometry.boundingBox.getCenter(center);
@@ -110,7 +110,7 @@ function CustomModel({ modelData, isFullscreen }) {
 
   useFrame(() => {
     if (!scene) return;
-    // Pobieramy najświeższe dane bezpośrednio bez wyzwalania re-rendera
+    
     const data = useSensorStore.getState().sensorData;
     
     scene.traverse((child) => {
@@ -122,9 +122,9 @@ function CustomModel({ modelData, isFullscreen }) {
           const valueN = data[`${sensorId}_N`] || 0;
           const intensity = Math.min(Math.abs(valueN) / maxLoadN, 1.0);
           
-          if (valueN > 0.5) { // Tension
+          if (valueN > 0.5) { 
              child.material.color.copy(baseColor).lerp(colorRed, intensity * 0.8 + 0.2);
-          } else if (valueN < -0.5) { // Compression
+          } else if (valueN < -0.5) { 
              child.material.color.copy(baseColor).lerp(colorBlue, intensity * 0.8 + 0.2);
           } else {
              child.material.color.lerp(baseColor, 0.1);
@@ -170,7 +170,7 @@ function CustomModel({ modelData, isFullscreen }) {
     <group onPointerDown={handlePointerDown} onPointerMissed={handlePointerMissed}>
       <primitive object={scene} />
       
-      {/* Interaktywny popover mapowania (tylko w trybie pełnoekranowym) */}
+      
       {selectedMesh && isFullscreen && (
         <Html position={selectedMesh.position} center zIndexRange={[100, 0]}>
           <div className="bg-white/95 backdrop-blur-md p-4 rounded-xl shadow-xl border border-slate-200 min-w-[220px] flex flex-col gap-3 transform -translate-y-1/2 cursor-default" onPointerDown={e => e.stopPropagation()}>
@@ -208,7 +208,7 @@ function CustomModel({ modelData, isFullscreen }) {
         </Html>
       )}
 
-      {/* Etykiety na żywo dla przypisanych belek */}
+      
       {mappedElements.map((el) => (
         <LiveLabel key={el.path} sensorId={el.sensorId} position={el.position} displayUnit={displayUnit} />
       ))}

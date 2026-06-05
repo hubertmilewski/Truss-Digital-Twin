@@ -26,13 +26,13 @@ function MainChart() {
   const yDomain = isN ? [0, 10] : [0, 1000];
   const yTicks = isN ? [0, 2, 4, 6, 8, 10] : [0, 200, 400, 600, 800, 1000];
 
-  // Parametry osi X
+  
   const currentMaxTime =
     history.length > 0 ? history[history.length - 1].time : 0;
   const xDomainEnd = Math.max(10, Math.ceil(currentMaxTime + 1));
 
   const getXTicks = () => {
-    // Obliczamy interwał tak, aby zawsze było około 10-20 ticków
+    
     let interval = 2;
     if (xDomainEnd > 60) interval = 5;
     if (xDomainEnd > 120) interval = 10;
@@ -47,7 +47,7 @@ function MainChart() {
     return ticks;
   };
 
-  // Formatowanie czasu sesji do MM:SS
+  
   const formatSessionTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -60,14 +60,14 @@ function MainChart() {
 
   return (
     <section className="bg-surface relative overflow-hidden flex flex-col p-3 sm:p-6 min-h-0 lg:h-auto h-full">
-      {/* Nagłówek sekcji */}
+      
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-3">
         <h3 className="text-xs uppercase font-bold text-brand-secondary tracking-widest">
           Dynamika Obciążenia
         </h3>
 
         <div className="flex items-center gap-1.5 sm:gap-3 w-full sm:w-auto">
-          {/* Przełącznik jednostek */}
+          
           <div className="flex items-center h-8 sm:h-11 bg-brand-bg border border-surface-border rounded-lg overflow-hidden shadow-sm">
             <button
               onClick={() => setDisplayUnit("N")}
@@ -92,7 +92,7 @@ function MainChart() {
             </button>
           </div>
 
-          {/* Wyświetlacz czasu sesji */}
+          
           <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 h-8 sm:h-11 bg-brand-bg border border-surface-border rounded-lg shadow-sm">
             <span className="text-[8px] sm:text-[10px] font-bold text-brand-secondary uppercase tracking-widest">Czas</span>
             <span className="text-[10px] sm:text-sm font-bold font-mono text-brand-text tabular-nums leading-none">
@@ -101,7 +101,7 @@ function MainChart() {
             <span className="text-[8px] sm:text-[10px] font-bold text-brand-secondary">s</span>
           </div>
 
-          {/* Przycisk START/STOP POMIAR (Tylko Host) */}
+          
           {isConnected && !isGuestMode && (
             <button
               onClick={toggleRecording}
@@ -115,7 +115,7 @@ function MainChart() {
             </button>
           )}
 
-          {/* Status nagrywania (Tylko Widz) */}
+          
           {isGuestMode && (
             <div className={`flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-6 h-8 sm:h-11 rounded-lg text-[9px] sm:text-xs font-bold tracking-wider shadow-sm ${
               isRecording
@@ -132,7 +132,7 @@ function MainChart() {
         </div>
       </div>
 
-      {/* Kontener wykresu */}
+      
       <div className="flex-1 bg-surface border border-surface-border rounded-xl shadow-sm overflow-hidden min-h-[250px] sm:min-h-0">
         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
           <LineChart
@@ -202,7 +202,7 @@ function MainChart() {
               labelFormatter={(label) => `Czas: ${label}s`}
               cursor={{ stroke: "#94A3B8", strokeWidth: 1, strokeDasharray: "4 4" }}
             />
-            {/* Ukryta linia kotwicząca oś Y, gdy nie ma danych */}
+            
             <Line 
               type="monotone" 
               dataKey="_placeholder" 

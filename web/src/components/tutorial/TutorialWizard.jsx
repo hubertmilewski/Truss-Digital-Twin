@@ -204,13 +204,13 @@ function TutorialWizard() {
     }
   }, [tutorialCompleted]);
 
-  // Autoodtwarzanie prezentacji w ostatnim kroku
+  
   useEffect(() => {
     let timer;
     if (step === 4 && tourSlide < 4) {
       timer = setTimeout(() => {
         setTourSlide((prev) => prev + 1);
-      }, 8000); // 8 sekund na każdy slajd
+      }, 8000); 
     }
     return () => clearTimeout(timer);
   }, [step, tourSlide]);
@@ -348,7 +348,7 @@ function TutorialWizard() {
                     block: "center",
                   });
 
-                  // Zaznaczamy cały blok od linii 70 do 95
+                  
                   for (let i = 70; i <= 95; i++) {
                     const line = document.getElementById(`line-main.py-${i}`);
                     if (line) {
@@ -445,7 +445,7 @@ function TutorialWizard() {
                 className="flex transition-transform duration-500 ease-in-out"
                 style={{ transform: `translateX(-${tourSlide * 100}%)` }}
               >
-                {/* Slajd 1 */}
+                
                 <div className="w-full shrink-0 px-2 flex flex-col items-center">
                   <div className="w-full h-56 sm:h-72 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
                     <img
@@ -464,7 +464,7 @@ function TutorialWizard() {
                   </p>
                 </div>
 
-                {/* Slajd 2 */}
+                
                 <div className="w-full shrink-0 px-2 flex flex-col items-center">
                   <div className="w-full h-56 sm:h-72 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
                     <img
@@ -483,7 +483,7 @@ function TutorialWizard() {
                   </p>
                 </div>
 
-                {/* Slajd 3 */}
+                
                 <div className="w-full shrink-0 px-2 flex flex-col items-center">
                   <div className="w-full h-56 sm:h-72 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
                     <img
@@ -502,7 +502,7 @@ function TutorialWizard() {
                   </p>
                 </div>
 
-                {/* Slajd 4 */}
+                
                 <div className="w-full shrink-0 px-2 flex flex-col items-center">
                   <div className="w-full h-56 sm:h-72 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
                     <img
@@ -521,7 +521,7 @@ function TutorialWizard() {
                     aby przypisać do niej czujnik telemetrii!
                   </p>
                 </div>
-                {/* Slajd 5 */}
+                
                 <div className="w-full shrink-0 px-2 flex flex-col items-center">
                   <div className="w-full h-56 sm:h-72 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
                     <img
@@ -540,7 +540,7 @@ function TutorialWizard() {
                 </div>
               </div>
 
-              {/* Kropki nawigacji */}
+              
               <div className="flex justify-center gap-2 mt-6">
                 {[0, 1, 2, 3, 4].map((idx) => (
                   <button
@@ -565,7 +565,7 @@ function TutorialWizard() {
   return (
     <div className="fixed inset-0 z-200 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
       <div className="bg-surface w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border border-surface-border flex flex-col max-h-[90vh]">
-        {/* Header - Pasek Postępu */}
+        
         <div className="px-6 py-4 border-b border-surface-border bg-slate-50 flex items-center justify-between shrink-0">
           <div className="flex gap-2">
             {[0, 1, 2, 3, 4].map((i) => (
@@ -580,12 +580,12 @@ function TutorialWizard() {
           </span>
         </div>
 
-        {/* Content */}
+        
         <div className="p-6 sm:p-8 overflow-y-auto flex-1">
           {renderStepContent()}
         </div>
 
-        {/* Footer - Controls */}
+        
         <div className="px-6 py-4 border-t border-surface-border bg-slate-50 flex items-center justify-between shrink-0">
           <button
             onClick={handlePrev}

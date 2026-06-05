@@ -14,7 +14,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('chart');
 
   useEffect(() => {
-    // Ładowanie modelu z IndexedDB
+    
     getModelFiles().then(files => {
       if (files && files.length > 0) {
         const gltfFile = files.find(f => f.name.toLowerCase().endsWith('.gltf') || f.name.toLowerCase().endsWith('.glb'));
@@ -31,14 +31,14 @@ function App() {
       }
     });
 
-    // Sprawdzanie czy url zawiera zaproszenie do sesji P2P
+    
     const params = new URLSearchParams(window.location.search);
     const sessionToJoin = params.get('session');
     if (sessionToJoin) {
       import('./utils/peerManager').then(m => {
         m.PeerManager.initViewer(sessionToJoin).catch(console.error);
       });
-      // Czyszczenie URL żeby nie próbował łączyć ponownie przy przeładowaniu F5
+      
       window.history.replaceState({}, document.title, "/");
     }
   }, []);
@@ -49,14 +49,14 @@ function App() {
       <IntroAnimation />
       <Header />
 
-      {/* Desktop layout: 3-column grid */}
+      
       <main className="flex-1 hidden lg:grid grid-cols-[300px_2fr_1fr] overflow-hidden">
         <SidebarLeft />
         <MainChart />
         <SidebarRight />
       </main>
 
-      {/* Mobile/Tablet layout: single panel controlled by tabs */}
+      
       <main className="flex-1 lg:hidden overflow-hidden flex flex-col">
         <div className={`flex-1 ${activeTab === 'chart' ? 'flex flex-col overflow-hidden' : 'overflow-y-auto'}`}>
           {activeTab === 'telemetry' && <SidebarLeft />}
@@ -67,7 +67,7 @@ function App() {
 
       <Footer />
 
-      {/* Mobile bottom navigation */}
+      
       <MobileNav activeTab={activeTab} setActiveTab={setActiveTab} />
     </div>
   );

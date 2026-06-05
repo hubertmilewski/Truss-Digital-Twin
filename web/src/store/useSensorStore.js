@@ -1,11 +1,11 @@
 import { create } from 'zustand'
 
 export const useSensorStore = create((set, get) => ({
-  // Aktualny odczyt
-  sensorData: {},
-  sensors: [], // Lista czujników z Raspberry: [{id: 'sensor_A', label: 'Belka (A)'}, ...]
   
-  // Historia odczytów w aktywnej sesji
+  sensorData: {},
+  sensors: [], 
+  
+  
   history: [],
   
   isConnected: false,
@@ -15,12 +15,12 @@ export const useSensorStore = create((set, get) => ({
   isRecording: false,
   startTime: null,
   displayUnit: 'N',
-  extremeValues: {}, // format: { 'sensor_A': { max: { valueG, valueN, time }, min: { valueG, valueN, time } } }
+  extremeValues: {}, 
   customModelUrl: null,
   meshSensorMap: JSON.parse(localStorage.getItem('pb_mesh_mapping') || '{}'),
   
-  // Konfiguracja sprzętu i tutorialu
-  maxLoadN: 10, // Domyślnie 10 N
+  
+  maxLoadN: 10, 
   tutorialCompleted: localStorage.getItem('pb_tutorial') === 'true',
   
   setMaxLoadN: (val) => set({ maxLoadN: val }),
@@ -39,7 +39,7 @@ export const useSensorStore = create((set, get) => ({
   setConnectionError: (error) => set({ connectionError: error }),
   setCustomModelUrl: (url) => set({ customModelUrl: url }),
   
-  // Stan sieciowy
+  
   sessionId: null,
   viewerCount: 0,
   isGuestMode: false,
@@ -71,7 +71,7 @@ export const useSensorStore = create((set, get) => ({
   }),
   setMeshSensorMapping: (meshId, sensorId) => set((state) => {
     const newMap = { ...state.meshSensorMap };
-    // Jeśli ten czujnik był przypisany do innej belki, usuwamy to powiązanie (1 do 1)
+    
     Object.keys(newMap).forEach(key => {
       if (newMap[key] === sensorId) delete newMap[key];
     });
@@ -82,15 +82,15 @@ export const useSensorStore = create((set, get) => ({
       delete newMap[meshId];
     }
     
-    // Zapisujemy od razu w localStorage
+    
     localStorage.setItem('pb_mesh_mapping', JSON.stringify(newMap));
     
     return { meshSensorMap: newMap };
   }),
   
-  // Aktualizacja danych + opcjonalne dodawanie do historii
+  
   setSensorData: (newData) => set((state) => {
-    // Jeśli to paczka konfiguracyjna
+    
     if (newData.type === 'config') {
       return { sensors: newData.sensors };
     }
@@ -98,7 +98,7 @@ export const useSensorStore = create((set, get) => ({
     const normalizedData = { ...newData };
     const updatedSensorData = { ...state.sensorData, ...normalizedData };
     
-    // dynamiczne wykrywanie czujników w przypadku utraty paczki konfiguracyjnej
+    
     const newSensors = [...state.sensors];
     let sensorsChanged = false;
 
@@ -124,10 +124,10 @@ export const useSensorStore = create((set, get) => ({
     const currentTime = new Date().getTime();
     const relativeTime = parseFloat(((currentTime - state.startTime) / 1000).toFixed(1));
 
-    // Szukamy ekstremów w nowej paczce danych
+    
     let newExtremeValues = { ...state.extremeValues };
 
-    // Przeszukujemy klucze kończące się na _g (gramy)
+    
     Object.keys(normalizedData).forEach(key => {
       if (key.endsWith('_g')) {
         const fullSensorId = key.replace('_g', ''); // np. 'sensor_A'
@@ -163,7 +163,7 @@ export const useSensorStore = create((set, get) => ({
     };
   }),
 
-  // Przełączanie nagrywania
+  
   toggleRecording: () => set((state) => {
     const switchingOn = !state.isRecording;
     

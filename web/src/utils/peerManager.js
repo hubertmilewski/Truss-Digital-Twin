@@ -83,7 +83,7 @@ export const PeerManager = {
     if (!peer || connections.length === 0) return;
     
     const now = Date.now();
-    if (now - lastBroadcastTime < 33) return; // limit ~30 FPS
+    if (now - lastBroadcastTime < 33) return; 
     lastBroadcastTime = now;
 
     const message = { type: 'TELEMETRY', payload: data, isRecording };
