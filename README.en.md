@@ -142,3 +142,12 @@ Firefox and Safari are not supported due to the absence of a Web Serial API impl
 ## Author
 
 Project completed as part of the Teamwork course at Bialystok University of Technology. It combines elements of analog electronics (force measurement), microcontroller programming, and modern web engineering (React, Zustand, Three.js, WebRTC, WebGL).
+
+---
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
+You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, provided that the original copyright notice and this permission notice are included in all copies or substantial portions of the software.
+
+The software is provided **"as is"**, without warranty of any kind.

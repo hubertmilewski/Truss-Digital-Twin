@@ -142,3 +142,12 @@ Przeglądarki Firefox i Safari nie są obsługiwane ze względu na brak implemen
 ## Autor
 
 Projekt zrealizowany jako projekt na przedmiot **Praca W Zespole Politechnika Białostocka**. Łączy elementy elektroniki analogowej (pomiar siły), programowania mikrokontrolerów oraz nowoczesnej inżynierii webowej (React, Zustand, Three.js, WebRTC, WebGL).
+
+---
+
+## Licencja
+
+Projekt jest udostępniony na licencji [MIT](./LICENSE).
+Możesz go swobodnie używać, kopiować, modyfikować i dystrybuować, pod warunkiem zachowania informacji o prawach autorskich i niniejszej licencji we wszystkich kopiach lub istotnych częściach oprogramowania.
+
+Oprogramowanie jest dostarczane **"tak jak jest"**, bez jakiejkolwiek gwarancji.
