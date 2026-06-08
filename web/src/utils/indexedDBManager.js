@@ -1,17 +1,9 @@
-/**
- * IndexedDB Manager - Persystencja danych pomiarów
- * Przechowuje WSZYSTKIE dane pomiarów, nawet po zamknięciu przeglądarki
- */
-
 const DB_NAME = 'TrussMeasurements';
 const STORE_NAME = 'measurements';
 const DB_VERSION = 1;
 
 let db = null;
 
-/**
- * Inicjalizuje IndexedDB
- */
 export const initIndexedDB = async () => {
   return new Promise((resolve, reject) => {
     if (db) {
@@ -39,9 +31,8 @@ export const initIndexedDB = async () => {
 };
 
 /**
- * Zapisuje punkt danych do IndexedDB
- * @param {Object} dataPoint - Punkt danych z czasem i wartościami czujników
- * @param {string} sessionId - ID sesji pomiarowej
+ * @param {Object} dataPoint 
+ * @param {string} sessionId 
  */
 export const saveToIndexedDB = async (dataPoint, sessionId = 'default') => {
   try {
@@ -68,9 +59,38 @@ export const saveToIndexedDB = async (dataPoint, sessionId = 'default') => {
 };
 
 /**
- * Pobiera wszystkie dane z IndexedDB dla danej sesji
- * @param {string} sessionId - ID sesji
- * @returns {Array} Tablica wszystkich danych
+ * @param {Array} dataArray 
+ * @param {string} sessionId 
+ */
+export const saveBulkToIndexedDB = async (dataArray, sessionId = 'default') => {
+  if (!dataArray || dataArray.length === 0) return;
+  try {
+    if (!db) await initIndexedDB();
+
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+
+    return new Promise((resolve, reject) => {
+      transaction.onerror = () => reject(transaction.error);
+      transaction.oncomplete = () => resolve();
+
+      dataArray.forEach(dataPoint => {
+        store.add({
+          ...dataPoint,
+          sessionId,
+          timestamp: Date.now(),
+          dbTimestamp: new Date().toISOString()
+        });
+      });
+    });
+  } catch (error) {
+    console.error('Błąd zbiorczego zapisu do IndexedDB:', error);
+  }
+};
+
+/**
+ * @param {string} sessionId
+ * @returns {Array} 
  */
 export const getAllFromIndexedDB = async (sessionId = 'default') => {
   try {
@@ -98,10 +118,9 @@ export const getAllFromIndexedDB = async (sessionId = 'default') => {
 };
 
 /**
- * Pobiera ostatnie N punktów danych
- * @param {number} count - Liczba ostatnich punktów
- * @param {string} sessionId - ID sesji
- * @returns {Array} Tablica ostatnich punktów
+ * @param {number} count 
+ * @param {string} sessionId
+ * @returns {Array} 
  */
 export const getLastNFromIndexedDB = async (count = 1000, sessionId = 'default') => {
   try {
@@ -114,8 +133,7 @@ export const getLastNFromIndexedDB = async (count = 1000, sessionId = 'default')
 };
 
 /**
- * Czyszczenie danych dla sesji
- * @param {string} sessionId - ID sesji
+ * @param {string} sessionId 
  */
 export const clearSessionFromIndexedDB = async (sessionId = 'default') => {
   try {
@@ -144,8 +162,7 @@ export const clearSessionFromIndexedDB = async (sessionId = 'default') => {
 };
 
 /**
- * Pobiera całą bazę danych (dla debugowania)
- * @returns {Array} Wszystkie dane w bazie
+ * @returns {Array} 
  */
 export const getAllDataFromIndexedDB = async () => {
   try {
@@ -174,6 +191,7 @@ export const getAllDataFromIndexedDB = async () => {
 export default {
   initIndexedDB,
   saveToIndexedDB,
+  saveBulkToIndexedDB,
   getAllFromIndexedDB,
   getLastNFromIndexedDB,
   clearSessionFromIndexedDB,

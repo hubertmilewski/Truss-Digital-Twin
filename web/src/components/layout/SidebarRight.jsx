@@ -24,13 +24,15 @@ function SidebarRight() {
   };
 
   const exportToExcel = async () => {
-    const { history, sensors, sessionId } = useSensorStore.getState();
+    const { history, sensors, localRecordingId } = useSensorStore.getState();
+        
+    const archivedData = localRecordingId
+      ? await getAllFromIndexedDB(localRecordingId)
+      : [];
     
-    // Pobierz archiwiowane dane z IndexedDB
-    const archivedData = await getAllFromIndexedDB(sessionId || 'default');
-    
-    // Połącz archiwum z aktualnym ring buffer'em
-    const allData = [...archivedData, ...history];
+    const archivedTimes = new Set(archivedData.map(d => d.time));
+    const uniqueHistory = history.filter(d => !archivedTimes.has(d.time));
+    const allData = [...archivedData, ...uniqueHistory];
     
     if (!allData || allData.length === 0) {
       alert("Brak danych do eksportu!");
