@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { initIndexedDB, saveToIndexedDB, saveBulkToIndexedDB, getAllFromIndexedDB } from '../utils/indexedDBManager'
+import { initIndexedDB, saveToIndexedDB, saveBulkToIndexedDB } from '../utils/indexedDBManager'
 
 initIndexedDB().catch(err => console.error('Błąd inicjalizacji IndexedDB:', err))
 
@@ -180,19 +180,6 @@ export const useSensorStore = create((set, get) => ({
     };
   }),
 
-  
-  loadLastSession: async () => {
-    const recordingId = localStorage.getItem('pb_recording_id');
-    if (!recordingId) return;
-    try {
-      const data = await getAllFromIndexedDB(recordingId);
-      if (data && data.length > 0) {
-        set({ history: data, localRecordingId: recordingId });
-      }
-    } catch (err) {
-      console.warn('Błąd wczytywania ostatniej sesji z IndexedDB:', err);
-    }
-  },
 
   toggleRecording: () => {
     const state = useSensorStore.getState();
