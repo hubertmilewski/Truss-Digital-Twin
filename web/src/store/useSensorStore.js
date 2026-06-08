@@ -1,4 +1,8 @@
 import { create } from 'zustand'
+import { initIndexedDB, saveToIndexedDB } from '../utils/indexedDBManager'
+
+// Inicjalizuj IndexedDB na starcie
+initIndexedDB().catch(err => console.error('Błąd inicjalizacji IndexedDB:', err))
 
 export const useSensorStore = create((set, get) => ({
   sensorData: {},
@@ -143,10 +147,25 @@ export const useSensorStore = create((set, get) => ({
       timestamp: `${relativeTime}s`
     };
 
+    // Ring Buffer - przechowuj ostatnie 120s (~2400 punktów przy 20 Hz)
+    const MAX_HISTORY_LENGTH = 2400;
+    const newHistory = [...state.history, newEntry];
+    
+    // Archiwizuj najstarsze dane do IndexedDB jeśli przekroczysz limit
+    if (newHistory.length > MAX_HISTORY_LENGTH && state.isRecording) {
+      const dataToArchive = newHistory[0];
+      // Archiwizuj asynchronicznie w tle (bez czekania)
+      saveToIndexedDB(dataToArchive, state.sessionId).catch(err => 
+        console.warn('Błąd archiwizacji do IndexedDB:', err)
+      );
+    }
+
+    const finalHistory = newHistory.slice(-MAX_HISTORY_LENGTH);
+
     return {
       sensorData: updatedSensorData,
       extremeValues: newExtremeValues,
-      history: [...state.history, newEntry].slice(-50000),
+      history: finalHistory,
       ...(sensorsChanged ? { sensors: newSensors } : {})
     };
   }),
