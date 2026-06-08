@@ -1,4 +1,7 @@
 import { create } from 'zustand'
+import { initIndexedDB, saveToIndexedDB, saveBulkToIndexedDB } from '../utils/indexedDBManager'
+
+initIndexedDB().catch(err => console.error('Błąd inicjalizacji IndexedDB:', err))
 
 export const useSensorStore = create((set, get) => ({
   sensorData: {},
@@ -33,6 +36,7 @@ export const useSensorStore = create((set, get) => ({
   setConnectionError: (error) => set({ connectionError: error }),
   setCustomModelUrl: (url) => set({ customModelUrl: url }),
   
+  localRecordingId: localStorage.getItem('pb_recording_id') || null,
   sessionId: null,
   viewerCount: 0,
   isGuestMode: false,
@@ -52,16 +56,27 @@ export const useSensorStore = create((set, get) => ({
     isRecording: config.isRecording || false
   })),
 
-  startRecording: () => set({
-    isRecording: true,
-    startTime: new Date().getTime(),
-    history: [],
-    extremeValues: {}
-  }),
+  startRecording: () => {
+    const newRecordingId = `rec_${Date.now()}`;
+    localStorage.setItem('pb_recording_id', newRecordingId);
+    set({
+      isRecording: true,
+      startTime: new Date().getTime(),
+      history: [],
+      extremeValues: {},
+      localRecordingId: newRecordingId
+    });
+  },
 
-  stopRecording: () => set({
-    isRecording: false
-  }),
+  stopRecording: () => {
+    const { history, localRecordingId } = useSensorStore.getState();
+    if (history.length > 0 && localRecordingId) {
+      saveBulkToIndexedDB(history, localRecordingId).catch(err =>
+        console.warn('Błąd zapisu końcowej historii do IndexedDB:', err)
+      );
+    }
+    set({ isRecording: false });
+  },
   setMeshSensorMapping: (meshId, sensorId) => set((state) => {
     const newMap = { ...state.meshSensorMap };
     
@@ -143,25 +158,38 @@ export const useSensorStore = create((set, get) => ({
       timestamp: `${relativeTime}s`
     };
 
+    // Ring Buffer - przechowuj ostatnie 120s (~2400 punktów przy 20 Hz)
+    const MAX_HISTORY_LENGTH = 2400;
+    const newHistory = [...state.history, newEntry];
+    
+    // Archiwizuj najstarsze dane do IndexedDB jeśli przekroczysz limit
+    if (newHistory.length > MAX_HISTORY_LENGTH && state.isRecording) {
+      const dataToArchive = newHistory[0];
+      saveToIndexedDB(dataToArchive, state.localRecordingId || 'default').catch(err =>
+        console.warn('Błąd archiwizacji do IndexedDB:', err)
+      );
+    }
+
+    const finalHistory = newHistory.slice(-MAX_HISTORY_LENGTH);
+
     return {
       sensorData: updatedSensorData,
       extremeValues: newExtremeValues,
-      history: [...state.history, newEntry].slice(-50000),
+      history: finalHistory,
       ...(sensorsChanged ? { sensors: newSensors } : {})
     };
   }),
 
-  
-  toggleRecording: () => set((state) => {
+
+  toggleRecording: () => {
+    const state = useSensorStore.getState();
     const switchingOn = !state.isRecording;
-    
-    return {
-      isRecording: switchingOn,
-      startTime: switchingOn ? new Date().getTime() : state.startTime,
-      history: switchingOn ? [] : state.history,
-      extremeValues: switchingOn ? {} : state.extremeValues
-    };
-  }),
+    if (switchingOn) {
+      useSensorStore.getState().startRecording();
+    } else {
+      useSensorStore.getState().stopRecording();
+    }
+  },
   
 
   resetData: () => set({

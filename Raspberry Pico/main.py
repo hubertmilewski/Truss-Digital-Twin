@@ -70,28 +70,25 @@ def main():
     czujniki = [
         LoadCell(
             name="sensor_A",
-            pin_dt=2, 
-            pin_sck=3,
-            tara=-346790,
-            wspolczynnik=973382,
-            rozmiar_bufora=20
-        ),
+            pin_dt=14, 
+            pin_sck=15,
+            tara=-79849,
+            wspolczynnik=640625, 
+            rozmiar_bufora=20),
         LoadCell(
             name="sensor_B",
-            pin_dt=4, 
-            pin_sck=5,
-            tara=-53350, 
-            wspolczynnik=896836, 
-            rozmiar_bufora=20
-        ),
+            pin_dt=2, 
+            pin_sck=3,
+            tara=-335225,
+            wspolczynnik=681466, 
+            rozmiar_bufora=20),
         LoadCell(
             name="sensor_C",
-            pin_dt=6, 
-            pin_sck=7,
-            tara=-97180,
-            wspolczynnik=981618, 
-            rozmiar_bufora=20
-        )
+            pin_dt=7, 
+            pin_sck=8,
+            tara=-41207,
+            wspolczynnik=648660,  
+            rozmiar_bufora=20),
     ]
     
     # Konfiguracja czujników 
@@ -116,8 +113,8 @@ def main():
                 dane = czujnik.read_data()
                 ostatnie_odczyty.update(dane)
                 zaktualizowano = True
-                
-        # Jeśli którykolwiek czujnik podał nowe dane, wysyłamy połączoną paczkę JSON
+        
+        # Wysyłamy dane jeśli są dostępne
         if zaktualizowano and ostatnie_odczyty:
             json_parts = []
             for k, v in ostatnie_odczyty.items():
@@ -133,7 +130,9 @@ def main():
             print(json.dumps(config_msg))
             last_config_time = time.ticks_ms()
 
-        time.sleep_ms(1)
+        # Opóźnienie 50ms - główna pętla sprawdza czujniki co 50ms zamiast co 1ms
+        # To zmniejsza obciążenie Pico 
+        time.sleep_ms(50)
 
 if __name__ == "__main__":
     main()

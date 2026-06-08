@@ -4,6 +4,7 @@ import { useSensorStore } from "../../store/useSensorStore";
 import Visualization from "../visualization/Visualization";
 import * as XLSX from "xlsx";
 import { saveModelFiles, clearModelFiles } from "../../utils/modelStorage";
+import { getAllFromIndexedDB } from "../../utils/indexedDBManager";
 
 function SidebarRight() {
   const setCustomModelUrl = useSensorStore(state => state.setCustomModelUrl);
@@ -22,19 +23,27 @@ function SidebarRight() {
     }, 200);
   };
 
-  const exportToExcel = () => {
-    const { history, sensors } = useSensorStore.getState();
+  const exportToExcel = async () => {
+    const { history, sensors, localRecordingId } = useSensorStore.getState();
+        
+    const archivedData = localRecordingId
+      ? await getAllFromIndexedDB(localRecordingId)
+      : [];
     
-    if (!history || history.length === 0) {
+    const archivedTimes = new Set(archivedData.map(d => d.time));
+    const uniqueHistory = history.filter(d => !archivedTimes.has(d.time));
+    const allData = [...archivedData, ...uniqueHistory];
+    
+    if (!allData || allData.length === 0) {
       alert("Brak danych do eksportu!");
       return;
     }
 
-    const dataToExport = history.map(row => {
+    const dataToExport = allData.map(row => {
       const exportRow = { "Czas [s]": row.time };
       sensors.forEach(sensor => {
-        exportRow[`${sensor.label} [g]`] = row[`${sensor.id}_g`];
-        exportRow[`${sensor.label} [N]`] = row[`${sensor.id}_N`];
+        exportRow[`${sensor.label} [g]`] = row[`${sensor.id}_g`] ?? 0;
+        exportRow[`${sensor.label} [N]`] = row[`${sensor.id}_N`] ?? 0;
       });
       return exportRow;
     });

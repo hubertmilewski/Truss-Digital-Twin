@@ -14,7 +14,6 @@ function App() {
   const [activeTab, setActiveTab] = useState('chart');
 
   useEffect(() => {
-    
     getModelFiles().then(files => {
       if (files && files.length > 0) {
         const gltfFile = files.find(f => f.name.toLowerCase().endsWith('.gltf') || f.name.toLowerCase().endsWith('.glb'));
