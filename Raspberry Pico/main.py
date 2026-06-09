@@ -54,7 +54,7 @@ class LoadCell:
         if waga_g < 0:
             waga_g = 0
             
-        # Wyliczamy Niutony: masa w kilogramach * przyspieszenie ziemskie
+        # Wyliczamy Niutony, masa w kilogramach * przyspieszenie ziemskie
         waga_N = (waga_g / 1000) * self.g
         
         return {

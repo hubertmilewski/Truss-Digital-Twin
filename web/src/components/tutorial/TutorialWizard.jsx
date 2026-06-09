@@ -235,13 +235,12 @@ function TutorialWizard() {
       setStep(step - 1);
     }
   };
-
   const renderStepContent = () => {
     switch (step) {
       case 0:
         return (
-          <div className="animate-fade-in">
-            <div className="flex items-center gap-3 mb-4">
+          <div className="animate-fade-in text-sm text-brand-text/90 leading-relaxed">
+            <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-brand-bg flex items-center justify-center text-brand-primary">
                 <FilePlusCorner className="w-5 h-5" />
               </div>
@@ -254,57 +253,142 @@ function TutorialWizard() {
                 </p>
               </div>
             </div>
-            <p className="text-sm text-brand-text/80 mb-4">
-              Aby Raspberry Pi Pico mogło komunikować się ze wzmacniaczem
-              sygnału (hx711), potrzebuje odpowiedniego sterownika.
-              <strong>
-                Utwórz na swoim urządzeniu plik o nazwie{" "}
-                <code className="bg-slate-100 px-1.5 py-0.5 rounded text-brand-primary">
+            
+            <p className="mb-4">
+              Aby Raspberry Pi Pico mogło komunikować się ze wzmacniaczem sygnału (HX711), potrzebuje odpowiedniego sterownika.
+            </p>
+            
+            <p className="mb-2 font-bold text-brand-text">
+              Instrukcja krok po kroku:
+            </p>
+            <ul className="list-decimal pl-5 space-y-2 mb-6 text-brand-text">
+              <li>
+                Utwórz na swoim urządzeniu plik o nazwie:{" "}
+                <code className="bg-slate-100 px-1.5 py-0.5 rounded text-brand-primary font-mono font-semibold">
                   hx711.py
                 </code>
-              </strong>{" "}
-              i wklej do niego poniższy kod (lub go po prostu pobierz). Nie
-              musisz go w żaden sposób edytować.
-            </p>
+              </li>
+              <li>
+                Skopiuj i wklej do niego poniższy kod (lub pobierz plik bezpośrednio przyciskiem po prawej).
+              </li>
+              <li>
+                Zapisz plik na urządzeniu. Kod ten jest gotowy do działania i nie wymaga edycji.
+              </li>
+            </ul>
+
             <CodeBlock code={hx711Code} filename="hx711.py" />
           </div>
         );
       case 1:
         return (
-          <div className="animate-fade-in">
-            <div className="flex items-center gap-3 mb-4">
+          <div className="animate-fade-in text-sm text-brand-text/90 leading-relaxed">
+            <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
                 <Settings className="w-5 h-5" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-brand-text">
-                  Krok 2: Kalibracja belek
+                  Krok 2: Kalibracja czujników tensometrycznych (HX711)
                 </h3>
                 <p className="text-xs text-brand-secondary">
-                  Ustalanie tary i proporcji obciążenia
+                  Wyznaczanie parametrów TARA oraz WSPÓŁCZYNNIK
                 </p>
               </div>
             </div>
-            <p className="text-sm text-brand-text/80 mb-4">
-              Każda belka tensometryczna jest minimalnie inna. Użyjemy tego
-              skryptu, aby zdobyć unikalne parametry kalibracji. Skopiuj ten kod
-              do pliku{" "}
-              <code className="bg-slate-100 px-1.5 py-0.5 rounded text-amber-600">
-                kalibracja.py
-              </code>{" "}
-              na urządzeniu, podłącz wybraną belkę i uruchom program. Konsola
-              poprosi Cię o odciążenie wagi (aby pobrać tarę) a następnie
-              położenie wzorca (znanego ciężaru, np. odważnika 100g). Zapisz
-              wygenerowaną na końcu <strong>Tarę</strong> i{" "}
-              <strong>Współczynnik</strong> – zaraz będziemy ich potrzebować!
+            
+            <p className="mb-4">
+              Ten poradnik wyjaśnia, jak krok po kroku wyznaczyć dwa parametry: <strong>TARA</strong> oraz <strong>WSPÓŁCZYNNIK</strong>, aby Twoja waga wskazywała poprawny wynik w gramach.
+            </p>
+
+            <p className="mb-2 font-bold text-brand-text">
+              Krok 1: Przygotowanie środowiska (Waga Pusta)
+            </p>
+            <ol className="list-decimal pl-5 space-y-2 mb-4 text-brand-text">
+              <li>
+                Upewnij się, że na czujniku nie leży absolutnie nic. Żadnych przedmiotów, odważników, ani nawet Twoje ręce.
+              </li>
+              <li>
+                Wgraj i uruchom poniższy kod testowy na mikrokontrolerze.
+              </li>
+              <li>
+                Spójrz na terminal. Zobaczysz lecące liczby (pozytywne lub negatywne).
+              </li>
+              <li>
+                Zapisz tę wartość. To jest Twoja <strong>TARA</strong>.
+              </li>
+            </ol>
+            <div className="text-xs text-slate-500 mb-4 pl-5">
+              <strong>Przykład:</strong> W terminalu widzisz: <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">sensor_X: -79849</code>. Zapisujesz: <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">Tara = -79849</code>.
+            </div>
+
+            <p className="mb-2 font-bold text-brand-text">
+              Krok 2: Pomiar z obciążeniem (Waga Pełna)
+            </p>
+            <ol className="list-decimal pl-5 space-y-2 mb-4 text-brand-text">
+              <li>
+                Przygotuj przedmiot o dokładnie znanej masie wyrażonej w gramach (np. odważnik 1000 g, paczka cukru itp.).
+              </li>
+              <li>
+                Połóż go delikatnie na czujnik.
+              </li>
+              <li>
+                Spójrz na terminal. Liczby gwałtownie się zmienią.
+              </li>
+              <li>
+                Poczekaj 2-3 sekundy, aż wynik się ustabilizuje i zapisz tę nową wartość. To jest Twój <strong>ODCZYT Z OBCIĄŻENIEM</strong>.
+              </li>
+            </ol>
+            <div className="text-xs text-slate-500 mb-4 pl-5">
+              <strong>Przykład:</strong> Kładziesz odważnik o wadze 1040 g. W terminalu widzisz teraz: <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">sensor_X: 586400</code>. Zapisujesz: <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">Odczyt = 586400</code> oraz <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">Masa = 1040</code>.
+            </div>
+
+            <p className="mb-2 font-bold text-brand-text">
+              Krok 3: Obliczenie współczynnika (Wzór)
+            </p>
+            <p className="mb-2">
+              Mając te trzy liczby, podstawiamy je pod wzór kalibracyjny:
+            </p>
+            <div className="bg-slate-100 border border-slate-200 p-4 rounded-xl mb-3 text-center font-mono text-brand-text text-xs sm:text-sm">
+              Współczynnik = <sup>(Odczyt z obciążeniem - Tara)</sup> &frasl; <sub>Masa w gramach</sub> &times; 1000
+            </div>
+            <p className="text-xs text-slate-500 italic mb-4">
+              Uwaga: Ponieważ nasz docelowy kod produkcyjny mnoży wynik końcowy przez 1000, musimy to uwzględnić już na etapie wyliczania współczynnika.
+            </p>
+
+            <p className="mb-2 font-semibold text-brand-text">
+              Przykładowe obliczenie krok po kroku:
+            </p>
+            <p className="text-xs text-slate-600 mb-2">
+              (Tara = -79849, Odczyt = 586400, Masa = 1040 g):
+            </p>
+            <ol className="list-decimal pl-5 space-y-2 mb-6 text-brand-text">
+              <li>
+                Odejmij Tarę od Odczytu (pamiętaj, że minus i minus daje plus!): <br />
+                <span className="font-mono text-xs bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">586400 - (-79849) = 586400 + 79849 = 666249</span>
+              </li>
+              <li>
+                Podziel wynik przez masę odważnika: <br />
+                <span className="font-mono text-xs bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">666249 / 1040 &asymp; 640.624</span>
+              </li>
+              <li>
+                Pomnóż wynik przez 1000: <br />
+                <span className="font-mono text-xs bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">640.624 &times; 1000 = 640624</span>
+              </li>
+            </ol>
+            <p className="mb-6 font-bold text-brand-text">
+              Twoja ostateczna liczba to: 640624.
+            </p>
+
+            <p className="mb-2 text-xs text-slate-500 italic">
+              Kod skryptu do uruchomienia na Pico:
             </p>
             <CodeBlock code={kalibracjaCode} filename="kalibracja.py" />
           </div>
         );
       case 2:
         return (
-          <div className="animate-fade-in">
-            <div className="flex items-center gap-3 mb-4">
+          <div className="animate-fade-in text-sm text-brand-text/90 leading-relaxed">
+            <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600">
                 <Code className="w-5 h-5" />
               </div>
@@ -313,31 +397,29 @@ function TutorialWizard() {
                   Krok 3: Program docelowy
                 </h3>
                 <p className="text-xs text-brand-secondary">
-                  Kod odczytujący i buforujący dane (main.py)
+                  Gdzie wkleić uzyskane parametry (main.py)
                 </p>
               </div>
             </div>
-            <p className="text-sm text-brand-text/80 mb-4">
-              To jest główny program, który zbiera dane, filtruje je (wyciągając
-              średnią kroczącą z X próbek, by wyeliminować szumy) i przesyła do
-              aplikacji webowej. W tym kodzie{" "}
-              <strong>musisz dokonać edycji!</strong>
-              <br />
-              <br />
-              Odszukaj miejsca definiującego belki i podmień{" "}
-              <span className="text-brand-primary font-mono text-xs">
-                tara
-              </span>{" "}
-              oraz{" "}
-              <span className="text-brand-primary font-mono text-xs">
-                wspolczynnik
-              </span>{" "}
-              na te z poprzedniego kroku. Zapisz plik jako{" "}
-              <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600">
-                main.py
-              </code>{" "}
-              na Pico, aby odpalał się automatycznie po podłączeniu zasilania.
+            
+            <p className="mb-4">
+              Otrzymane liczby wpisujesz bezpośrednio do kodu docelowego aplikacji, w miejscu inicjalizacji czujnika:
             </p>
+
+            <p className="mb-2 font-bold text-brand-text">
+              Wymagana konfiguracja:
+            </p>
+            <ol className="list-decimal pl-5 space-y-2 mb-6 text-brand-text">
+              <li>
+                Odszukaj w kodzie sekcję definiującą belki (użyj przycisku poniżej, aby ją podświetlić).
+              </li>
+              <li>
+                Podmień wartości parametru <code className="bg-slate-100 px-1.5 py-0.5 rounded text-brand-primary font-mono text-xs">tara</code> oraz <code className="bg-slate-100 px-1.5 py-0.5 rounded text-brand-primary font-mono text-xs">wspolczynnik</code> na te uzyskane w poprzednich krokach.
+              </li>
+              <li>
+                Zapisz plik jako <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-700 font-mono font-semibold">main.py</code> na Pico. Po wgraniu właściwego kodu waga będzie pokazywać idealnie równą wartość w gramach.
+              </li>
+            </ol>
 
             <button
               onClick={() => {
@@ -349,7 +431,7 @@ function TutorialWizard() {
                   });
 
                   
-                  for (let i = 70; i <= 95; i++) {
+                  for (let i = 70; i <= 92; i++) {
                     const line = document.getElementById(`line-main.py-${i}`);
                     if (line) {
                       line.style.backgroundColor = "rgba(59, 130, 246, 0.25)";
@@ -381,8 +463,8 @@ function TutorialWizard() {
         );
       case 3:
         return (
-          <div className="animate-fade-in">
-            <div className="flex items-center gap-3 mb-4">
+          <div className="animate-fade-in text-sm text-brand-text/90 leading-relaxed">
+            <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600">
                 <Scale className="w-5 h-5" />
               </div>
@@ -395,14 +477,20 @@ function TutorialWizard() {
                 </p>
               </div>
             </div>
-            <p className="text-sm text-brand-text/80 mb-6">
-              Oprogramowanie sprzętowe jest już gotowe! Teraz powiedz nam tylko,
-              jakiej belki używasz. Dzięki temu suwaki postępu (znajdujące się
-              pod wykresami sił) będą odpowiednio pokazywać procent obciążenia i
-              warnować o przeciążeniu.
+            
+            <p className="mb-4">
+              Oprogramowanie sprzętowe jest już gotowe. Na koniec podaj maksymalny udźwig pojedynczej belki, której używasz w swoim projekcie.
             </p>
+            
+            <p className="mb-2 font-bold text-brand-text">
+              Dzięki temu aplikacja będzie mogła:
+            </p>
+            <ul className="list-disc pl-5 space-y-1.5 mb-6 text-slate-600">
+              <li>Odpowiednio skalować paski postępu obciążenia pod wykresami.</li>
+              <li>Prawidłowo obliczać procentowe obciążenie i ostrzegać w przypadku przeciążenia czujnika.</li>
+            </ul>
 
-            <div className="bg-surface border border-surface-border p-6 rounded-xl shadow-sm">
+            <div className="bg-slate-50 border border-surface-border p-6 rounded-xl shadow-sm">
               <label className="block text-xs font-bold text-brand-secondary uppercase tracking-widest mb-2">
                 Maksymalny udźwig pojedynczej belki (N)
               </label>
@@ -423,21 +511,19 @@ function TutorialWizard() {
                 </span>
               </div>
               <p className="text-[10px] text-slate-400 mt-2 italic">
-                Standardowa belka 1kg = ~9.81 N. (Możesz zmienić tę opcję
-                później).
+                Standardowa belka 1kg = ~9.81 N. Opcję tę możesz zmienić później w ustawieniach.
               </p>
             </div>
           </div>
         );
       case 4:
         return (
-          <div className="animate-fade-in flex flex-col items-center">
+          <div className="animate-fade-in flex flex-col items-center text-sm text-brand-text/90 leading-relaxed">
             <h3 className="text-2xl font-bold text-brand-text mb-2 text-center">
               Gotowe! Szybki Tour
             </h3>
-            <p className="text-sm text-brand-text/80 text-center max-w-md mb-6">
-              Kratownica jest gotowa do testów. Oto krótka nawigacja po
-              interfejsie aplikacji:
+            <p className="text-center max-w-md mb-6">
+              Kratownica jest gotowa do testów. Oto krótka nawigacja po poszczególnych elementach interfejsu aplikacji:
             </p>
 
             <div className="w-full bg-slate-50 border border-surface-border rounded-xl p-4 sm:p-6 mb-4 relative overflow-hidden">
@@ -457,10 +543,8 @@ function TutorialWizard() {
                   <h4 className="font-bold text-brand-primary text-base uppercase mb-2 text-center">
                     Górny Pasek
                   </h4>
-                  <p className="text-sm text-slate-600 text-center max-w-sm">
-                    Znajdziesz tu przycisk <strong>PODŁĄCZ PICO</strong>, status
-                    połączenia oraz opcję <strong>UDOSTĘPNIJ SESJĘ</strong> na
-                    żywo dla innych widzów.
+                  <p className="text-slate-600 text-center max-w-sm">
+                    Główne centrum sterowania. Znajdziesz tu przycisk <strong>PODŁĄCZ PICO</strong>, status połączenia oraz opcję udostępniania sesji na żywo dla innych widzów.
                   </p>
                 </div>
 
@@ -476,10 +560,8 @@ function TutorialWizard() {
                   <h4 className="font-bold text-brand-primary text-base uppercase mb-2 text-center">
                     Lewy Panel
                   </h4>
-                  <p className="text-sm text-slate-600 text-center max-w-sm">
-                    Kafelki ze stanem nacisku poszczególnych belek na żywo oraz
-                    bardzo ważne z perspektywy badań{" "}
-                    <strong>EKSTREMA (Min/Max)</strong> z czasem ich wystąpienia.
+                  <p className="text-slate-600 text-center max-w-sm">
+                    Pokazuje stan nacisku poszczególnych belek na żywo oraz zarejestrowane wartości maksymalne i minimalne pomiarów.
                   </p>
                 </div>
 
@@ -495,10 +577,8 @@ function TutorialWizard() {
                   <h4 className="font-bold text-brand-primary text-base uppercase mb-2 text-center">
                     Wykres (Środek)
                   </h4>
-                  <p className="text-sm text-slate-600 text-center max-w-sm">
-                    Wykres liniowy działający na żywo, przełączniki gramy/Niutony
-                    oraz ogromny przycisk <strong>START / STOP POMIAR</strong>,
-                    rozpoczynający rejestrację na wykresie.
+                  <p className="text-slate-600 text-center max-w-sm">
+                    Wykres liniowy działający w czasie rzeczywistym. Możesz tu włączyć/wyłączyć pomiar oraz przełączyć jednostki pomiarowe (gramy/Niutony).
                   </p>
                 </div>
 
@@ -514,11 +594,8 @@ function TutorialWizard() {
                   <h4 className="font-bold text-brand-primary text-base uppercase mb-2 text-center">
                     Prawy Panel
                   </h4>
-                  <p className="text-sm text-slate-600 text-center max-w-sm">
-                    Opcje <strong>eksportu badań (XLSX)</strong> oraz
-                    wgrywania cyfrowego bliźniaka 3D (import folderu). W trybie
-                    pełnoekranowym modelu możesz <strong>kliknąć na dowolną belkę</strong>,
-                    aby przypisać do niej czujnik telemetrii!
+                  <p className="text-slate-600 text-center max-w-sm">
+                    Pozwala na eksport pomiarów do pliku Excel (XLSX) oraz wczytanie modelu 3D, na którym w trybie pełnoekranowym można przypisać fizyczne czujniki do belek.
                   </p>
                 </div>
                 
@@ -533,9 +610,8 @@ function TutorialWizard() {
                   <h4 className="font-bold text-brand-primary text-base uppercase mb-2 text-center">
                     Udostępnianie i Dołączanie
                   </h4>
-                  <p className="text-sm text-slate-600 text-center max-w-sm">
-                    Po wygenerowaniu sesji otrzymasz kod dostępu oraz kod QR. Widzowie
-                    mogą wejść na tę samą stronę i wpisać kod lub zeskanować QR, by na żywo podglądać Twoje odczyty (w trybie <strong>WIDZA</strong> P2P).
+                  <p className="text-slate-600 text-center max-w-sm">
+                    Wygenerowany kod sesji lub kod QR pozwala innym użytkownikom podglądać Twoje odczyty na żywo w trybie widza (P2P).
                   </p>
                 </div>
               </div>
