@@ -144,4 +144,3 @@ class HX711(object):
             return raw_data
         else:
             return self._convert_from_twos_complement(raw_data)
-

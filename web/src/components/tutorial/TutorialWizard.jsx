@@ -288,44 +288,100 @@ function TutorialWizard() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-brand-text">
-                  Krok 2: Kalibracja belek
+                  Krok 2: Kalibracja czujników tensometrycznych (HX711)
                 </h3>
                 <p className="text-xs text-brand-secondary">
-                  Ustalanie tary i proporcji obciążenia
+                  Wyznaczanie parametrów TARA oraz WSPÓŁCZYNNIK
                 </p>
               </div>
             </div>
             
             <p className="mb-4">
-              Każda belka tensometryczna posiada minimalnie inną charakterystykę. Użyjemy skryptu kalibracyjnego, aby wyznaczyć dokładne parametry pomiarowe dla Twojego czujnika.
+              Ten poradnik wyjaśnia, jak krok po kroku wyznaczyć dwa parametry: <strong>TARA</strong> oraz <strong>WSPÓŁCZYNNIK</strong>, aby Twoja waga wskazywała poprawny wynik w gramach.
             </p>
 
             <p className="mb-2 font-bold text-brand-text">
-              Jak przeprowadzić kalibrację:
+              Krok 1: Przygotowanie środowiska (Waga Pusta)
+            </p>
+            <ol className="list-decimal pl-5 space-y-2 mb-4 text-brand-text">
+              <li>
+                Upewnij się, że na czujniku nie leży absolutnie nic. Żadnych przedmiotów, odważników, ani nawet Twoje ręce.
+              </li>
+              <li>
+                Wgraj i uruchom poniższy kod testowy na mikrokontrolerze.
+              </li>
+              <li>
+                Spójrz na terminal. Zobaczysz lecące liczby (pozytywne lub negatywne).
+              </li>
+              <li>
+                Zapisz tę wartość. To jest Twoja <strong>TARA</strong>.
+              </li>
+            </ol>
+            <div className="text-xs text-slate-500 mb-4 pl-5">
+              <strong>Przykład:</strong> W terminalu widzisz: <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">sensor_X: -79849</code>. Zapisujesz: <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">Tara = -79849</code>.
+            </div>
+
+            <p className="mb-2 font-bold text-brand-text">
+              Krok 2: Pomiar z obciążeniem (Waga Pełna)
+            </p>
+            <ol className="list-decimal pl-5 space-y-2 mb-4 text-brand-text">
+              <li>
+                Przygotuj przedmiot o dokładnie znanej masie wyrażonej w gramach (np. odważnik 1000 g, paczka cukru itp.).
+              </li>
+              <li>
+                Połóż go delikatnie na czujnik.
+              </li>
+              <li>
+                Spójrz na terminal. Liczby gwałtownie się zmienią.
+              </li>
+              <li>
+                Poczekaj 2-3 sekundy, aż wynik się ustabilizuje i zapisz tę nową wartość. To jest Twój <strong>ODCZYT Z OBCIĄŻENIEM</strong>.
+              </li>
+            </ol>
+            <div className="text-xs text-slate-500 mb-4 pl-5">
+              <strong>Przykład:</strong> Kładziesz odważnik o wadze 1040 g. W terminalu widzisz teraz: <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">sensor_X: 586400</code>. Zapisujesz: <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">Odczyt = 586400</code> oraz <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">Masa = 1040</code>.
+            </div>
+
+            <p className="mb-2 font-bold text-brand-text">
+              Krok 3: Obliczenie współczynnika (Wzór)
+            </p>
+            <p className="mb-2">
+              Mając te trzy liczby, podstawiamy je pod wzór kalibracyjny:
+            </p>
+            <div className="bg-slate-100 border border-slate-200 p-4 rounded-xl mb-3 text-center font-mono text-brand-text text-xs sm:text-sm">
+              Współczynnik = <sup>(Odczyt z obciążeniem - Tara)</sup> &frasl; <sub>Masa w gramach</sub> &times; 1000
+            </div>
+            <p className="text-xs text-slate-500 italic mb-4">
+              Uwaga: Ponieważ nasz docelowy kod produkcyjny mnoży wynik końcowy przez 1000, musimy to uwzględnić już na etapie wyliczania współczynnika.
+            </p>
+
+            <p className="mb-2 font-semibold text-brand-text">
+              Przykładowe obliczenie krok po kroku:
+            </p>
+            <p className="text-xs text-slate-600 mb-2">
+              (Tara = -79849, Odczyt = 586400, Masa = 1040 g):
             </p>
             <ol className="list-decimal pl-5 space-y-2 mb-6 text-brand-text">
               <li>
-                Utwórz plik o nazwie{" "}
-                <code className="bg-slate-100 px-1.5 py-0.5 rounded text-amber-700 font-mono font-semibold">
-                  kalibracja.py
-                </code>{" "}
-                na urządzeniu i skopiuj do niego poniższy kod.
+                Odejmij Tarę od Odczytu (pamiętaj, że minus i minus daje plus!): <br />
+                <span className="font-mono text-xs bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">586400 - (-79849) = 586400 + 79849 = 666249</span>
               </li>
               <li>
-                Podłącz wybraną belkę i uruchom program.
+                Podziel wynik przez masę odważnika: <br />
+                <span className="font-mono text-xs bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">666249 / 1040 &asymp; 640.624</span>
               </li>
               <li>
-                Postępuj zgodnie z komunikatami w konsoli:
-                <ul className="list-disc pl-5 mt-1.5 space-y-1 text-slate-600 text-xs">
-                  <li>Najpierw odciąż wagę w celu zebrania tary.</li>
-                  <li>Następnie umieść na niej znany ciężar wzorcowy (np. odważnik 100g).</li>
-                </ul>
-              </li>
-              <li>
-                Zapisz wygenerowane na końcu wartości: <strong>TARA</strong> oraz <strong>WSPÓŁCZYNNIK</strong> – będą one potrzebne w kolejnym kroku.
+                Pomnóż wynik przez 1000: <br />
+                <span className="font-mono text-xs bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">640.624 &times; 1000 = 640624</span>
               </li>
             </ol>
+            <p className="mb-6 font-bold text-brand-text">
+              Twoja ostateczna liczba to: 640624.
+            </p>
 
+            <p className="mb-2 text-xs text-slate-500 italic">
+              Kod skryptu do uruchomienia na Pico:
+            </p>
             <CodeBlock code={kalibracjaCode} filename="kalibracja.py" />
           </div>
         );
@@ -341,13 +397,13 @@ function TutorialWizard() {
                   Krok 3: Program docelowy
                 </h3>
                 <p className="text-xs text-brand-secondary">
-                  Kod odczytujący i buforujący dane (main.py)
+                  Gdzie wkleić uzyskane parametry (main.py)
                 </p>
               </div>
             </div>
             
             <p className="mb-4">
-              To jest główny program, który zbiera dane z czujników, filtruje je (wyciągając średnią kroczącą z próbek w celu eliminacji szumów) i przesyła bezpośrednio do aplikacji.
+              Otrzymane liczby wpisujesz bezpośrednio do kodu docelowego aplikacji, w miejscu inicjalizacji czujnika:
             </p>
 
             <p className="mb-2 font-bold text-brand-text">
@@ -355,17 +411,13 @@ function TutorialWizard() {
             </p>
             <ol className="list-decimal pl-5 space-y-2 mb-6 text-brand-text">
               <li>
-                Odszukaj w kodzie sekcję definiującą belki (możesz użyć przycisku podświetlenia poniżej).
+                Odszukaj w kodzie sekcję definiującą belki (użyj przycisku poniżej, aby ją podświetlić).
               </li>
               <li>
-                Podmień wartości zmiennych <code className="bg-slate-100 px-1 py-0.5 rounded text-brand-primary font-mono text-xs">tara</code> oraz <code className="bg-slate-100 px-1 py-0.5 rounded text-brand-primary font-mono text-xs">wspolczynnik</code> na parametry wyznaczone w poprzednim kroku.
+                Podmień wartości parametru <code className="bg-slate-100 px-1.5 py-0.5 rounded text-brand-primary font-mono text-xs">tara</code> oraz <code className="bg-slate-100 px-1.5 py-0.5 rounded text-brand-primary font-mono text-xs">wspolczynnik</code> na te uzyskane w poprzednich krokach.
               </li>
               <li>
-                Zapisz plik jako{" "}
-                <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-700 font-mono font-semibold">
-                  main.py
-                </code>{" "}
-                na Pico, aby program uruchamiał się automatycznie po podłączeniu zasilania.
+                Zapisz plik jako <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-700 font-mono font-semibold">main.py</code> na Pico. Po wgraniu właściwego kodu waga będzie pokazywać idealnie równą wartość w gramach.
               </li>
             </ol>
 
@@ -379,7 +431,7 @@ function TutorialWizard() {
                   });
 
                   
-                  for (let i = 70; i <= 95; i++) {
+                  for (let i = 70; i <= 92; i++) {
                     const line = document.getElementById(`line-main.py-${i}`);
                     if (line) {
                       line.style.backgroundColor = "rgba(59, 130, 246, 0.25)";
