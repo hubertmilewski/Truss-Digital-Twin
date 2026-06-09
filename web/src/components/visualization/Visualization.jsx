@@ -5,6 +5,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { useSensorStore } from "../../store/useSensorStore";
 import * as THREE from 'three';
+import { RotateCw, Eye, EyeOff } from "lucide-react";
 
 const getMeshPath = (mesh) => {
   let path = mesh.name || mesh.uuid;
@@ -50,7 +51,7 @@ function LiveLabel({ sensorId, position, displayUnit }) {
 }
 
 
-function CustomModel({ modelData, isFullscreen }) {
+function CustomModel({ modelData, isFullscreen, showLabels }) {
   
   const sensors = useSensorStore(state => state.sensors);
   const meshSensorMap = useSensorStore(state => state.meshSensorMap);
@@ -202,7 +203,7 @@ function CustomModel({ modelData, isFullscreen }) {
         </Html>
       )}
 
-      {mappedElements.map((el) => (
+      {showLabels && mappedElements.map((el) => (
         <LiveLabel key={el.path} sensorId={el.sensorId} position={el.position} displayUnit={displayUnit} />
       ))}
     </group>
@@ -211,6 +212,8 @@ function CustomModel({ modelData, isFullscreen }) {
 
 function Visualization({ isMiniature = false }) {
   const { customModelUrl } = useSensorStore();
+  const [shouldRotate, setShouldRotate] = useState(true);
+  const [showLabels, setShowLabels] = useState(true);
 
   return (
     <div className={`w-full h-full bg-slate-100 relative overflow-hidden flex items-center justify-center text-center`}>
@@ -222,29 +225,67 @@ function Visualization({ isMiniature = false }) {
       ></div>
 
       {customModelUrl && (
-        <div className="absolute inset-0 z-10 cursor-move">
-          <Canvas shadows={{ type: THREE.PCFShadowMap }} camera={{ position: [0, 0, 5], fov: 45 }}>
-            <ambientLight intensity={0.7} />
-            <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-mapSize={1024} />
-            <directionalLight position={[-5, 5, -5]} intensity={0.5} />
-            
-            <Suspense fallback={null}>
-              <Bounds fit clip margin={isMiniature ? 1.5 : 1.2}>
-                <CustomModel modelData={customModelUrl} isFullscreen={!isMiniature} />
-              </Bounds>
-              <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={10} blur={2} far={4} />
-              <Environment preset="city" />
-            </Suspense>
-            
-            <OrbitControls 
-              makeDefault 
-              enablePan={!isMiniature} 
-              enableZoom={!isMiniature} 
-              autoRotate={isMiniature}
-              autoRotateSpeed={1.5}
-            />
-          </Canvas>
-        </div>
+        <>
+          <div className="absolute inset-0 z-10 cursor-move">
+            <Canvas shadows={{ type: THREE.PCFShadowMap }} camera={{ position: [0, 0, 5], fov: 45 }}>
+              <ambientLight intensity={0.7} />
+              <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-mapSize={1024} />
+              <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+              
+              <Suspense fallback={null}>
+                <Bounds fit clip margin={isMiniature ? 1.5 : 1.2}>
+                  <CustomModel modelData={customModelUrl} isFullscreen={!isMiniature} showLabels={showLabels} />
+                </Bounds>
+                <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={10} blur={2} far={4} />
+                <Environment preset="city" />
+              </Suspense>
+              
+              <OrbitControls 
+                makeDefault 
+                enablePan={!isMiniature} 
+                enableZoom={!isMiniature} 
+                autoRotate={shouldRotate}
+                autoRotateSpeed={1.5}
+              />
+            </Canvas>
+          </div>
+
+          <div className={`absolute z-20 bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-xl shadow-lg flex select-none ${
+            isMiniature 
+              ? "bottom-2 right-2 p-1 gap-1 scale-90 origin-bottom-right" 
+              : "bottom-4 right-4 p-1.5 gap-1.5"
+          }`}>
+            <button
+              onClick={() => setShouldRotate(!shouldRotate)}
+              className={`rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1.5 text-xs font-bold cursor-pointer ${
+                isMiniature ? "p-1.5" : "p-2"
+              } ${
+                shouldRotate 
+                  ? "bg-brand-primary text-white shadow-sm" 
+                  : "bg-white/50 text-slate-600 hover:bg-slate-100 border border-slate-200/30"
+              }`}
+              title={shouldRotate ? "Wyłącz automatyczny obrót" : "Włącz automatyczny obrót"}
+            >
+              <RotateCw className={`w-4 h-4 ${shouldRotate ? "animate-spin" : ""}`} style={{ animationDuration: '6s' }} />
+              {!isMiniature && <span className="hidden sm:inline">OBRÓT</span>}
+            </button>
+
+            <button
+              onClick={() => setShowLabels(!showLabels)}
+              className={`rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1.5 text-xs font-bold cursor-pointer ${
+                isMiniature ? "p-1.5" : "p-2"
+              } ${
+                showLabels 
+                  ? "bg-brand-primary text-white shadow-sm" 
+                  : "bg-white/50 text-slate-600 hover:bg-slate-100 border border-slate-200/30"
+              }`}
+              title={showLabels ? "Ukryj napisy obciążeniowe" : "Pokaż napisy obciążeniowe"}
+            >
+              {showLabels ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+              {!isMiniature && <span className="hidden sm:inline">ETYKIETY</span>}
+            </button>
+          </div>
+        </>
       )}
       
       {!customModelUrl && (
