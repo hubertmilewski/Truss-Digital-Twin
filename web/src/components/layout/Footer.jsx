@@ -6,24 +6,29 @@ function Footer() {
   const [uptime, setUptime] = useState("00:00:00");
 
   useEffect(() => {
-    let interval;
-    if (isConnected && connectionStartTime) {
-      interval = setInterval(() => {
-        const now = new Date().getTime();
-        const diff = now - connectionStartTime;
-        
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        
-        const pad = (num) => String(num).padStart(2, '0');
-        setUptime(`${pad(hours)}:${pad(minutes)}:${pad(seconds)}`);
-      }, 1000);
-    } else {
-      setUptime("00:00:00");
+    if (!isConnected || !connectionStartTime) {
+      return;
     }
 
-    return () => clearInterval(interval);
+    const updateTime = () => {
+      const now = new Date().getTime();
+      const diff = now - connectionStartTime;
+      
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      const pad = (num) => String(num).padStart(2, '0');
+      setUptime(`${pad(hours)}:${pad(minutes)}:${pad(seconds)}`);
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+
+    return () => {
+      clearInterval(interval);
+      setUptime("00:00:00");
+    };
   }, [isConnected, connectionStartTime]);
 
   return (

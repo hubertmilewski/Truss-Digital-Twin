@@ -105,7 +105,11 @@ export const getAllFromIndexedDB = async (sessionId = 'default') => {
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
         const data = request.result.map(item => {
-          const { id, timestamp, dbTimestamp, sessionId, ...rest } = item;
+          const rest = { ...item };
+          delete rest.id;
+          delete rest.timestamp;
+          delete rest.dbTimestamp;
+          delete rest.sessionId;
           return rest;
         });
         resolve(data);
@@ -176,7 +180,11 @@ export const getAllDataFromIndexedDB = async () => {
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
         const data = request.result.map(item => {
-          const { id, timestamp, dbTimestamp, sessionId, ...rest } = item;
+          const rest = { ...item };
+          delete rest.id;
+          delete rest.timestamp;
+          delete rest.dbTimestamp;
+          delete rest.sessionId;
           return rest;
         });
         resolve(data);
