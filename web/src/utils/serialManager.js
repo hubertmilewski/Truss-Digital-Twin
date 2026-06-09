@@ -20,7 +20,11 @@ const stopWatchdog = () => {
 
 export const connectSerial = async () => {
   try {
-    useSensorStore.getState().setConnectionError(null);
+    const state = useSensorStore.getState();
+    if (state.isDemoMode) {
+      state.stopDemoMode();
+    }
+    state.setConnectionError(null);
     port = await navigator.serial.requestPort();
     await port.open({ baudRate: 115200 }); 
     
@@ -68,7 +72,7 @@ const cleanupConnection = () => {
 
 const readLoop = async () => {
   const textDecoder = new TextDecoderStream();
-  const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+  port.readable.pipeTo(textDecoder.writable).catch(err => console.error("Stream pipe error:", err));
   reader = textDecoder.readable.getReader();
 
   let buffer = "";
@@ -122,8 +126,8 @@ const readLoop = async () => {
     if (port) {
       try {
         await port.close();
-      } catch (e) {
-        
+      } catch {
+        // Ignored
       }
       port = null;
     }

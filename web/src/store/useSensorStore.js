@@ -19,6 +19,8 @@ export const useSensorStore = create((set, get) => ({
   meshSensorMap: JSON.parse(localStorage.getItem('pb_mesh_mapping') || '{}'),
   maxLoadN: 10, 
   tutorialCompleted: localStorage.getItem('pb_tutorial') === 'true',
+  isDemoMode: false,
+  demoIntervalId: null,
   
   setMaxLoadN: (val) => set({ maxLoadN: val }),
   completeTutorial: () => {
@@ -203,4 +205,81 @@ export const useSensorStore = create((set, get) => ({
     isConnected: status,
     connectionStartTime: status ? new Date().getTime() : null 
   }),
+
+  startDemoMode: () => {
+    const { demoIntervalId } = get();
+    if (demoIntervalId) clearInterval(demoIntervalId);
+
+    const demoMapping = {
+      "Złożenie1/Tensometr-1": "sensor_A",
+      "Złożenie1/podpora nie ruchawa-1/Tensometr 1-1": "sensor_B",
+      "Złożenie1/podpora nie ruchawa-1/Tensometr 1-2": "sensor_C"
+    };
+
+    localStorage.setItem('pb_mesh_mapping', JSON.stringify(demoMapping));
+
+    set({
+      isDemoMode: true,
+      isConnected: true,
+      isRecording: true,
+      startTime: Date.now(),
+      sensors: [
+        { id: "sensor_A", label: "Belka (A)" },
+        { id: "sensor_B", label: "Belka (B)" },
+        { id: "sensor_C", label: "Belka (C)" }
+      ],
+      meshSensorMap: demoMapping,
+      customModelUrl: {
+        mainUrl: "/kratownica/złożenie1.gltf",
+        fileMap: {}
+      },
+      history: [],
+      extremeValues: {},
+      sensorData: {}
+    });
+
+    let demoTime = 0;
+    const interval = setInterval(() => {
+      demoTime += 0.2;
+      
+      const valA_N = Math.max(0, 3 + Math.sin(demoTime * 0.8) * 2.5 + Math.sin(demoTime * 2.5) * 0.4 + Math.random() * 0.1);
+      const valB_N = Math.max(0, 4 + Math.cos(demoTime * 0.6) * 3.5 + Math.sin(demoTime * 1.8) * 0.5 + Math.random() * 0.1);
+      const valC_N = Math.max(0, 2 + Math.sin(demoTime * 0.4) * 1.8 + Math.cos(demoTime * 3.0) * 0.3 + Math.random() * 0.1);
+
+      const valA_g = valA_N * 101.9716;
+      const valB_g = valB_N * 101.9716;
+      const valC_g = valC_N * 101.9716;
+
+      const newObj = {
+        sensor_A_N: valA_N,
+        sensor_A_g: valA_g,
+        sensor_B_N: valB_N,
+        sensor_B_g: valB_g,
+        sensor_C_N: valC_N,
+        sensor_C_g: valC_g,
+      };
+
+      get().setSensorData(newObj);
+    }, 200);
+
+    set({ demoIntervalId: interval });
+  },
+
+  stopDemoMode: () => {
+    const { demoIntervalId } = get();
+    if (demoIntervalId) {
+      clearInterval(demoIntervalId);
+    }
+    set({
+      isDemoMode: false,
+      isConnected: false,
+      isRecording: false,
+      demoIntervalId: null,
+      customModelUrl: null,
+      sensors: [],
+      history: [],
+      extremeValues: {},
+      sensorData: {}
+    });
+  },
 }))

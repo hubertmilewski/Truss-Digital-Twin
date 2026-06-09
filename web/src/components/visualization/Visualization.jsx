@@ -67,14 +67,14 @@ function CustomModel({ modelData, isFullscreen }) {
     loader.setDRACOLoader(dracoLoader);
 
     loader.manager.setURLModifier((urlToResolve) => {
-      let filename = urlToResolve;
+      let filename;
       try {
         const parsedUrl = new URL(urlToResolve);
         filename = decodeURIComponent(parsedUrl.pathname.split('/').pop());
-      } catch (e) {
+      } catch {
         filename = decodeURIComponent(urlToResolve.split('/').pop());
       }
-      if (modelData.fileMap[filename]) return modelData.fileMap[filename];
+      if (modelData.fileMap && modelData.fileMap[filename]) return modelData.fileMap[filename];
       return urlToResolve;
     });
   });

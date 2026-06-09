@@ -26,6 +26,9 @@ function Header() {
     isGuestMode,
     sessionId,
     viewerCount,
+    isDemoMode,
+    startDemoMode,
+    stopDemoMode,
   } = useSensorStore();
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -88,15 +91,27 @@ function Header() {
           )}
 
           <div
-            className={`flex items-center gap-2 px-4 py-2 rounded-md text-[11px] font-bold tracking-widest shadow-sm border ${isGuestMode ? "bg-purple-500/10 text-purple-600 border-purple-500/20" : isConnected ? (isSignalLost ? "bg-amber-500/10 text-amber-600 border-amber-500/20" : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20") : "bg-red-500/5 text-red-500 border-red-500/20"}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-md text-[11px] font-bold tracking-widest shadow-sm border ${
+              isGuestMode
+                ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
+                : isDemoMode
+                  ? "bg-indigo-500/10 text-indigo-600 border-indigo-500/20"
+                  : isConnected
+                    ? isSignalLost
+                      ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                      : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                    : "bg-red-500/5 text-red-500 border-red-500/20"
+            }`}
           >
             {isGuestMode
               ? "TRYB WIDZA (P2P)"
-              : isConnected
-                ? isSignalLost
-                  ? "BRAK DANYCH"
-                  : "PODŁĄCZONO PICO"
-                : "NIE PODŁĄCZONO"}
+              : isDemoMode
+                ? "TRYB DEMO"
+                : isConnected
+                  ? isSignalLost
+                    ? "BRAK DANYCH"
+                    : "PODŁĄCZONO PICO"
+                  : "NIE PODŁĄCZONO"}
           </div>
 
           <div className="flex items-center gap-2">
@@ -130,20 +145,28 @@ function Header() {
 
             {!isGuestMode && isConnected && (
               <button
-                onClick={disconnectSerial}
+                onClick={isDemoMode ? stopDemoMode : disconnectSerial}
                 className="px-5 py-2 rounded-md text-sm font-bold text-brand-secondary hover:bg-slate-100 transition-all border border-surface-border active:scale-95 bg-white"
               >
-                ROZŁĄCZ
+                {isDemoMode ? "WYŁĄCZ DEMO" : "ROZŁĄCZ"}
               </button>
             )}
 
             {!isGuestMode && !isConnected && (
-              <button
-                onClick={connectSerial}
-                className="bg-brand-primary text-white hover:bg-blue-800 transition-all font-semibold px-5 py-2 rounded-md text-sm shadow-sm active:scale-95"
-              >
-                PODŁĄCZ PICO
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={startDemoMode}
+                  className="bg-purple-600 text-white hover:bg-purple-700 transition-all font-semibold px-5 py-2 rounded-md text-sm shadow-sm active:scale-95"
+                >
+                  URUCHOM DEMO
+                </button>
+                <button
+                  onClick={connectSerial}
+                  className="bg-brand-primary text-white hover:bg-blue-800 transition-all font-semibold px-5 py-2 rounded-md text-sm shadow-sm active:scale-95"
+                >
+                  PODŁĄCZ PICO
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -159,18 +182,30 @@ function Header() {
           )}
 
           <div
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-bold tracking-wider shadow-sm border ${isGuestMode ? "bg-purple-500/10 text-purple-600 border-purple-500/20" : isConnected ? (isSignalLost ? "bg-amber-500/10 text-amber-600 border-amber-500/20" : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20") : "bg-red-500/5 text-red-500 border-red-500/20"}`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-bold tracking-wider shadow-sm border ${
+              isGuestMode
+                ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
+                : isDemoMode
+                  ? "bg-indigo-500/10 text-indigo-600 border-indigo-500/20"
+                  : isConnected
+                    ? isSignalLost
+                      ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                      : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                    : "bg-red-500/5 text-red-500 border-red-500/20"
+            }`}
           >
             <span
               className={`w-1.5 h-1.5 rounded-full bg-current ${!isSignalLost && (isConnected || isGuestMode) ? "animate-pulse shadow-[0_0_6px_currentColor]" : ""}`}
             ></span>
             {isGuestMode
               ? "WIDZ"
-              : isConnected
-                ? isSignalLost
-                  ? "BRAK"
-                  : "OK"
-                : "OFF"}
+              : isDemoMode
+                ? "DEMO"
+                : isConnected
+                  ? isSignalLost
+                    ? "BRAK"
+                    : "OK"
+                  : "OFF"}
           </div>
 
           {!isGuestMode && (
@@ -209,23 +244,38 @@ function Header() {
           {!isGuestMode && isConnected ? (
             <button
               onClick={() => {
-                disconnectSerial();
+                if (isDemoMode) {
+                  stopDemoMode();
+                } else {
+                  disconnectSerial();
+                }
                 setMenuOpen(false);
               }}
               className="w-full py-2.5 rounded-lg text-sm font-bold text-brand-secondary border border-surface-border active:scale-95 bg-white hover:bg-slate-50 transition-colors"
             >
-              ROZŁĄCZ
+              {isDemoMode ? "WYŁĄCZ DEMO" : "ROZŁĄCZ"}
             </button>
           ) : !isGuestMode ? (
-            <button
-              onClick={() => {
-                connectSerial();
-                setMenuOpen(false);
-              }}
-              className="w-full py-2.5 rounded-lg text-sm font-bold bg-brand-primary text-white hover:bg-blue-800 transition-all active:scale-95 shadow-sm"
-            >
-              PODŁĄCZ PICO
-            </button>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => {
+                  startDemoMode();
+                  setMenuOpen(false);
+                }}
+                className="w-full py-2.5 rounded-lg text-sm font-bold bg-purple-600 text-white hover:bg-purple-700 transition-all active:scale-95 shadow-sm"
+              >
+                URUCHOM DEMO
+              </button>
+              <button
+                onClick={() => {
+                  connectSerial();
+                  setMenuOpen(false);
+                }}
+                className="w-full py-2.5 rounded-lg text-sm font-bold bg-brand-primary text-white hover:bg-blue-800 transition-all active:scale-95 shadow-sm"
+              >
+                PODŁĄCZ PICO
+              </button>
+            </div>
           ) : null}
         </div>
       )}
