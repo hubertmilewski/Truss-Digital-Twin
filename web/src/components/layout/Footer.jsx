@@ -44,7 +44,8 @@ function Footer() {
         </div>
       </div>
       <div className="uppercase text-center">
-        © 2026 PB System Wyświetlania Obciążeń
+        © 2026 PB System Wyświetlania Obciążeń | 
+        <a className="hover:text-brand-primary duration-300 ml-1" href="https://www.linkedin.com/in/hubert-milewski-957585358/" target="_blank" rel="noopener noreferrer">Hubert Milewski</a>
       </div>
     </footer>
   );
