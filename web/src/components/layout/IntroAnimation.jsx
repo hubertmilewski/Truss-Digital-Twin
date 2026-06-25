@@ -38,7 +38,7 @@ function IntroAnimation() {
       <img 
         src={logo} 
         alt="Politechnika Białostocka" 
-        className={`h-32 sm:h-48 drop-shadow-md transition-opacity duration-1000 ease-in-out ${
+        className={`h-32 sm:h-48 transition-opacity duration-1000 ease-in-out ${
           logoVisible ? "opacity-100" : "opacity-0"
         }`} 
       />
