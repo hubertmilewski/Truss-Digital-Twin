@@ -1,5 +1,9 @@
 import { create } from 'zustand'
-import { initIndexedDB, saveToIndexedDB, saveBulkToIndexedDB } from '../utils/indexedDBManager'
+import { initIndexedDB, saveBulkToIndexedDB } from '../utils/indexedDBManager'
+
+let archiveBuffer = [];
+const ARCHIVE_BUFFER_LIMIT = 100;
+
 
 initIndexedDB().catch(err => console.error('Błąd inicjalizacji IndexedDB:', err))
 
@@ -72,6 +76,12 @@ export const useSensorStore = create((set, get) => ({
 
   stopRecording: () => {
     const { history, localRecordingId } = useSensorStore.getState();
+    if (archiveBuffer.length > 0 && localRecordingId) {
+      saveBulkToIndexedDB([...archiveBuffer], localRecordingId).catch(err =>
+        console.warn('Błąd zapisu bufora archiwum do IndexedDB:', err)
+      );
+      archiveBuffer = [];
+    }
     if (history.length > 0 && localRecordingId) {
       saveBulkToIndexedDB(history, localRecordingId).catch(err =>
         console.warn('Błąd zapisu końcowej historii do IndexedDB:', err)
@@ -167,9 +177,15 @@ export const useSensorStore = create((set, get) => ({
     // Archiwizuj najstarsze dane do IndexedDB jeśli przekroczysz limit
     if (newHistory.length > MAX_HISTORY_LENGTH && state.isRecording) {
       const dataToArchive = newHistory[0];
-      saveToIndexedDB(dataToArchive, state.localRecordingId || 'default').catch(err =>
-        console.warn('Błąd archiwizacji do IndexedDB:', err)
-      );
+      archiveBuffer.push(dataToArchive);
+
+      if (archiveBuffer.length >= ARCHIVE_BUFFER_LIMIT) {
+        const batch = [...archiveBuffer];
+        archiveBuffer = [];
+        saveBulkToIndexedDB(batch, state.localRecordingId || 'default').catch(err =>
+          console.warn('Błąd archiwizacji zbiorczej do IndexedDB:', err)
+        );
+      }
     }
 
     const finalHistory = newHistory.slice(-MAX_HISTORY_LENGTH);
@@ -194,13 +210,16 @@ export const useSensorStore = create((set, get) => ({
   },
   
 
-  resetData: () => set({
-    sensorData: { sensor_A_g: 0, sensor_A_N: 0 },
-    history: [],
-    startTime: null,
-    isRecording: false,
-    extremeValues: {}
-  }),
+  resetData: () => {
+    archiveBuffer = [];
+    set({
+      sensorData: { sensor_A_g: 0, sensor_A_N: 0 },
+      history: [],
+      startTime: null,
+      isRecording: false,
+      extremeValues: {}
+    });
+  },
   setIsConnected: (status) => set({ 
     isConnected: status,
     connectionStartTime: status ? new Date().getTime() : null 

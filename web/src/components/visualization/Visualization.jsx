@@ -211,7 +211,7 @@ function CustomModel({ modelData, isFullscreen, showLabels }) {
 }
 
 function Visualization({ isMiniature = false }) {
-  const { customModelUrl } = useSensorStore();
+  const customModelUrl = useSensorStore(state => state.customModelUrl);
   const [shouldRotate, setShouldRotate] = useState(true);
   const [showLabels, setShowLabels] = useState(true);
 

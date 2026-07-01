@@ -16,20 +16,18 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 
 function Header() {
-  const {
-    isConnected,
-    isSignalLost,
-    connectionError,
-    setConnectionError,
-    maxLoadN,
-    setMaxLoadN,
-    isGuestMode,
-    sessionId,
-    viewerCount,
-    isDemoMode,
-    startDemoMode,
-    stopDemoMode,
-  } = useSensorStore();
+  const isConnected = useSensorStore(state => state.isConnected);
+  const isSignalLost = useSensorStore(state => state.isSignalLost);
+  const connectionError = useSensorStore(state => state.connectionError);
+  const setConnectionError = useSensorStore(state => state.setConnectionError);
+  const maxLoadN = useSensorStore(state => state.maxLoadN);
+  const setMaxLoadN = useSensorStore(state => state.setMaxLoadN);
+  const isGuestMode = useSensorStore(state => state.isGuestMode);
+  const sessionId = useSensorStore(state => state.sessionId);
+  const viewerCount = useSensorStore(state => state.viewerCount);
+  const isDemoMode = useSensorStore(state => state.isDemoMode);
+  const startDemoMode = useSensorStore(state => state.startDemoMode);
+  const stopDemoMode = useSensorStore(state => state.stopDemoMode);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);

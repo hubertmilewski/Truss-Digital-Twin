@@ -11,8 +11,14 @@ import {
 } from "recharts";
 
 function MainChart() {
-  const { history, isRecording, isConnected, displayUnit, setDisplayUnit, sensors, toggleRecording, isGuestMode } =
-    useSensorStore();
+  const history = useSensorStore(state => state.history);
+  const isRecording = useSensorStore(state => state.isRecording);
+  const isConnected = useSensorStore(state => state.isConnected);
+  const displayUnit = useSensorStore(state => state.displayUnit);
+  const setDisplayUnit = useSensorStore(state => state.setDisplayUnit);
+  const sensors = useSensorStore(state => state.sensors);
+  const toggleRecording = useSensorStore(state => state.toggleRecording);
+  const isGuestMode = useSensorStore(state => state.isGuestMode);
 
   const isN = displayUnit === "N";
   const unitLabel = isN ? "N" : "g";
