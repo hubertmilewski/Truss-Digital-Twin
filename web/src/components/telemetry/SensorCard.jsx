@@ -1,6 +1,8 @@
 function SensorCard({ label, valueG = 0, valueN = 0, maxLoadN = 10 }) {
-  const loadPercentage = Math.min((valueN / maxLoadN) * 100, 100);
-  const isOverloaded = valueN > maxLoadN * 0.8;
+  const isOverloaded = Math.abs(valueN) > maxLoadN * 0.8;
+  const loadPercentage = Math.min((Math.abs(valueN) / maxLoadN) * 50, 50);
+  const leftPosition = valueN >= 0 ? 50 : 50 - loadPercentage;
+  const isNegative = valueN < 0;
 
   return (
     <div className="bg-brand-bg border border-surface-border p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-shadow">
@@ -16,14 +18,18 @@ function SensorCard({ label, valueG = 0, valueN = 0, maxLoadN = 10 }) {
         {valueN.toFixed(2)}
         <span className="text-[10px] sm:text-sm font-normal text-brand-secondary ml-1">N</span>
       </div>
-      <div className="h-1 sm:h-1.5 w-full bg-surface-border rounded-full overflow-hidden">
+      <div className="relative h-1.5 sm:h-2 w-full bg-surface-border rounded-full overflow-hidden">
+        <div className="absolute left-1/2 top-0 bottom-0 w-[1.5px] bg-slate-300 z-10 -translate-x-1/2"></div>
         <div
-          className="h-full transition-all duration-300 ease-out"
+          className={`absolute h-full transition-all duration-300 ease-out ${
+            isOverloaded ? "animate-pulse" : ""
+          }`}
           style={{
+            left: `${leftPosition}%`,
             width: `${loadPercentage}%`,
-            backgroundColor: isOverloaded
-              ? "var(--color-brand-accent)"
-              : "var(--color-brand-primary)",
+            backgroundColor: isNegative
+              ? "var(--color-brand-primary)" 
+              : "var(--color-brand-accent)",
           }}
         ></div>
       </div>

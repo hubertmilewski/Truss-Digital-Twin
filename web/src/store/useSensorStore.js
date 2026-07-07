@@ -261,9 +261,9 @@ export const useSensorStore = create((set, get) => ({
     const interval = setInterval(() => {
       demoTime += 0.2;
       
-      const valA_N = Math.max(0, 3 + Math.sin(demoTime * 0.8) * 2.5 + Math.sin(demoTime * 2.5) * 0.4 + Math.random() * 0.1);
-      const valB_N = Math.max(0, 4 + Math.cos(demoTime * 0.6) * 3.5 + Math.sin(demoTime * 1.8) * 0.5 + Math.random() * 0.1);
-      const valC_N = Math.max(0, 2 + Math.sin(demoTime * 0.4) * 1.8 + Math.cos(demoTime * 3.0) * 0.3 + Math.random() * 0.1);
+      const valA_N = 5 * Math.sin(demoTime * 0.8) + Math.sin(demoTime * 2.5) * 0.4 + (Math.random() - 0.5) * 0.2;
+      const valB_N = 6 * Math.cos(demoTime * 0.6) + Math.sin(demoTime * 1.8) * 0.5 + (Math.random() - 0.5) * 0.2;
+      const valC_N = 3.5 * Math.sin(demoTime * 0.4) + Math.cos(demoTime * 3.0) * 0.3 + (Math.random() - 0.5) * 0.2;
 
       const valA_g = valA_N * 101.9716;
       const valB_g = valB_N * 101.9716;
