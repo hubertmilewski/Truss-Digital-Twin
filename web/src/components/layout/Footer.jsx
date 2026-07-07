@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { useSensorStore } from "../../store/useSensorStore";
 
 function Footer() {
-  const { isConnected, connectionStartTime, isSignalLost } = useSensorStore();
+  const isConnected = useSensorStore(state => state.isConnected);
+  const connectionStartTime = useSensorStore(state => state.connectionStartTime);
+  const isSignalLost = useSensorStore(state => state.isSignalLost);
   const [uptime, setUptime] = useState("00:00:00");
 
   useEffect(() => {

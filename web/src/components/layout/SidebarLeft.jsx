@@ -2,8 +2,12 @@ import { useSensorStore } from "../../store/useSensorStore";
 import SensorCard from "../telemetry/SensorCard";
 
 function SidebarLeft() {
-  const { sensorData, extremeValues, displayUnit, sensors, isConnected, maxLoadN } =
-    useSensorStore();
+  const sensorData = useSensorStore(state => state.sensorData);
+  const extremeValues = useSensorStore(state => state.extremeValues);
+  const displayUnit = useSensorStore(state => state.displayUnit);
+  const sensors = useSensorStore(state => state.sensors);
+  const isConnected = useSensorStore(state => state.isConnected);
+  const maxLoadN = useSensorStore(state => state.maxLoadN);
 
   const isN = displayUnit === "N";
 
