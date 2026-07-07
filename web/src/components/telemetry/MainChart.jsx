@@ -29,8 +29,20 @@ function MainChart() {
     "#f59e0b",
     "#8b5cf6",
   ];
-  const yDomain = isN ? [0, 10] : [0, 1000];
-  const yTicks = isN ? [0, 2, 4, 6, 8, 10] : [0, 200, 400, 600, 800, 1000];
+  const maxLoadN = useSensorStore(state => state.maxLoadN);
+  const maxLoadG = maxLoadN * 100;
+
+  const yDomain = isN ? [-maxLoadN, maxLoadN] : [-maxLoadG, maxLoadG];
+
+  const getYTicks = () => {
+    const max = isN ? maxLoadN : maxLoadG;
+    const step = max / 5;
+    const ticks = [];
+    for (let i = -max; i <= max; i += step) {
+      ticks.push(parseFloat(i.toFixed(1)));
+    }
+    return ticks;
+  };
   
   const currentMaxTime =
     history.length > 0 ? history[history.length - 1].time : 0;
@@ -167,7 +179,7 @@ function MainChart() {
             />
             <YAxis
               domain={yDomain}
-              ticks={yTicks}
+              ticks={getYTicks()}
               allowDataOverflow={false}
               axisLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
               tickLine={{ stroke: "#CBD5E1", strokeWidth: 1 }}
