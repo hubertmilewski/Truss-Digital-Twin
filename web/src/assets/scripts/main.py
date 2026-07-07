@@ -13,19 +13,12 @@ class LoadCell:
         
         self.waga = HX711(d_out=pin_dt, pd_sck=pin_sck)
         
-        # Resetowanie i wybudzanie modułu
+        # Poprawiony czas resetu 10ms pozwala na czysty start układu
         self.waga.power_off()
-        time.sleep_ms(1)
+        time.sleep_ms(10)
         self.waga.power_on()
         
-        # Tworzymy pustą listę, która będzie naszym "oknem" średniej kroczącej
         self.bufor = []
-        
-        # Zapełniamy bufor startowy (zrobi to tylko raz przy uruchomieniu)
-        while len(self.bufor) < self.rozmiar_bufora:
-            if self.waga.is_ready():
-                self.bufor.append(self.waga.read())
-            time.sleep_ms(10)
 
     def is_ready(self):
         return self.waga.is_ready()
@@ -33,13 +26,15 @@ class LoadCell:
     def read_data(self):
         surowy_odczyt = self.waga.read()
         
-        # Średnia krocząca 
-        self.bufor.pop(0)                # Wyrzucamy najstarszy odczyt
-        self.bufor.append(surowy_odczyt) # Dodajemy najświeższy
+        # Bezpieczna średnia krocząca, działa nawet gdy bufor jeszcze nie jest pełny
+        self.bufor.append(surowy_odczyt)
+        if len(self.bufor) > self.rozmiar_bufora:
+            self.bufor.pop(0) 
         
-        # Kopiujemy i sortujemy bufor, żeby odrzucić skrajności 
         posortowane = sorted(self.bufor)
-        margines = self.rozmiar_bufora // 5 
+        
+        # Skrajności odrzucamy dopiero, gdy mamy wystarczająco dużo danych w buforze
+        margines = len(posortowane) // 5 
         
         if margines > 0:
             odczyty_czyste = posortowane[margines : -margines]
@@ -48,13 +43,8 @@ class LoadCell:
             
         srednia = sum(odczyty_czyste) // len(odczyty_czyste)
         
-        # Wyliczamy gramy
         waga_g = ((srednia - self.tara) / self.wspolczynnik) * 1000
-        
-        if waga_g < 0:
-            waga_g = 0
             
-        # Wyliczamy Niutony, masa w kilogramach * przyspieszenie ziemskie
         waga_N = (waga_g / 1000) * self.g
         
         return {
@@ -66,73 +56,84 @@ class LoadCell:
 def main():
     print("System gotowy. Start odczytów...")
     
-    # Inicjalizacja czujników z danymi z kalibracji
     czujniki = [
-        LoadCell(
+      LoadCell(
             name="sensor_A",
-            pin_dt=14, 
-            pin_sck=15,
-            tara=-79849,
-            wspolczynnik=640625, 
-            rozmiar_bufora=20),
+            pin_dt=4,  
+            pin_sck=5,
+            tara=2382072,
+            wspolczynnik=-971,      
+            rozmiar_bufora=20
+        ),
         LoadCell(
             name="sensor_B",
-            pin_dt=2, 
-            pin_sck=3,
-            tara=-335225,
-            wspolczynnik=681466, 
-            rozmiar_bufora=20),
+            pin_dt=7,  
+            pin_sck=8,
+            tara=-489565, 
+            wspolczynnik=-598912,   
+            rozmiar_bufora=20
+        ),
         LoadCell(
             name="sensor_C",
-            pin_dt=7, 
-            pin_sck=8,
-            tara=-41207,
-            wspolczynnik=648660,  
-            rozmiar_bufora=20),
+            pin_dt=14,  
+            pin_sck=15,
+            tara=112139,
+            wspolczynnik=633048,
+            rozmiar_bufora=20
+        ),
+        LoadCell(
+            name="sensor_D",
+            pin_dt=12,  
+            pin_sck=13,
+            tara=3046894,
+            wspolczynnik=503531,      
+            rozmiar_bufora=20
+        )
     ]
     
-    # Konfiguracja czujników 
     config_msg = {
         "type": "config",
         "sensors": [
             {"id": "sensor_A", "label": "Belka (A)"},
             {"id": "sensor_B", "label": "Belka (B)"},
-            {"id": "sensor_C", "label": "Belka (C)"}
+            {"id": "sensor_C", "label": "Belka (C)"},
+            {"id": "sensor_D", "label": "Belka (D)"}
         ]
     }
     print(json.dumps(config_msg))
     
     ostatnie_odczyty = {}
     last_config_time = time.ticks_ms()
+    last_json_time = time.ticks_ms()
     
     while True:
-        zaktualizowano = False
+        now = time.ticks_ms()
         
+        # 1. Odczyt dostępnych danych w tle
         for czujnik in czujniki:
             if czujnik.is_ready():
                 dane = czujnik.read_data()
                 ostatnie_odczyty.update(dane)
-                zaktualizowano = True
         
-        # Wysyłamy dane jeśli są dostępne
-        if zaktualizowano and ostatnie_odczyty:
-            json_parts = []
-            for k, v in ostatnie_odczyty.items():
-                if isinstance(v, float):
-                    json_parts.append(f'"{k}": {v:.2f}')
-                else:
-                    json_parts.append(f'"{k}": {v}')
-            
-            print("{" + ", ".join(json_parts) + "}")
+        # 2. Wysyłka danych pomiarowych z rygorem czasowym (co 250ms -> 4Hz)
+        if time.ticks_diff(now, last_json_time) > 250:
+            if ostatnie_odczyty:
+                json_parts = []
+                for k, v in ostatnie_odczyty.items():
+                    if isinstance(v, float):
+                        json_parts.append(f'"{k}": {v:.2f}')
+                    else:
+                        json_parts.append(f'"{k}": {v}')
+                
+                print("{" + ", ".join(json_parts) + "}")
+            last_json_time = now
 
-        # Wysyłamy konfigurację co 5 sekund
-        if time.ticks_diff(time.ticks_ms(), last_config_time) > 5000:
+        # 3. Wysyłka konfiguracji co 5 sekund
+        if time.ticks_diff(now, last_config_time) > 5000:
             print(json.dumps(config_msg))
-            last_config_time = time.ticks_ms()
+            last_config_time = now
 
-        # Opóźnienie 50ms - główna pętla sprawdza czujniki co 50ms zamiast co 1ms
-        # To zmniejsza obciążenie Pico 
-        time.sleep_ms(50)
+        time.sleep_ms(20)
 
 if __name__ == "__main__":
     main()
